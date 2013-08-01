@@ -8,6 +8,8 @@ define(['draggable', 'constants'], function(Draggable, constants) {
 			this._super();
 			this.draggable;
 			this.dummyButton;
+
+			this.moving = false;
 		},
 
 		initWithInstructionType:function(type) {
@@ -24,22 +26,31 @@ define(['draggable', 'constants'], function(Draggable, constants) {
 			this.draggable.setZOrder(1);
 			this.addChild(this.draggable);
 
-
-
 			this.draggable.onTouchDown(function() {
 				this.setVisible(true);
 				self.getParent().reorderChild(self, 100);
-			})
+			});
+
+			this.draggable.onMoved(function() {
+
+			});
 
 			this.draggable.onMoveEnded(function() {
 				self.getParent().reorderChild(self, 0);
 				this.setVisible(false);
 				this.returnToHomePosition();
-			})
+			});
 
 			this.dummyButton = new cc.Sprite();
 			this.dummyButton.initWithFile(filename);
 			this.addChild(this.dummyButton);
+		},
+
+		_positionAfterMove:function() {
+			this.returnToHomePosition();
+		},
+		positionAfterMove:function(positioner) {
+			this._positionAfterMove = positioner;
 		},
 	})
 

@@ -1,7 +1,6 @@
 require.config({
     paths: {
         'instructioncontainer': '../../tools/splash/instruction-container',
-        // 'dragawaybutton': '../../tools/common/dragaway-button'
         'instructiondragbutton': '../../tools/splash/instruction-drag-button',
         'instructionticker': '../../tools/splash/instruction-ticker',
         'constants': '../../tools/splash/constants'
@@ -55,15 +54,8 @@ define(['exports', 'cocos2d', 'qlayer', 'toollayer', 'instructioncontainer', 'in
             var instructionTicker = new InstructionTicker();
             instructionTicker.setPosition(this._windowSize.width/2, 100);
             this.addChild(instructionTicker);
+        },
 
-
-/*            var dragawayButton = new InstructionDragButton();
-            dragawayButton.initWithFile(window.bl.getResource('Arrow_down'));
-            dragawayButton.setPosition(this.getAnchorPointInPoints());
-            this.addChild(dragawayButton);*/
-    
-
-        }
     });
 
     ToolLayer.create = function () {
