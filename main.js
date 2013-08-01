@@ -52,6 +52,9 @@ define(['exports', 'cocos2d', 'qlayer', 'toollayer', 'instructioncontainer', 'in
             instructionContainer.setZOrder(1);
             this.addChild(instructionContainer);
 
+            var instructionTicker = new InstructionTicker();
+            instructionTicker.setPosition(this._windowSize.width/2, 100);
+            this.addChild(instructionTicker);
 
 
 /*            var dragawayButton = new InstructionDragButton();
