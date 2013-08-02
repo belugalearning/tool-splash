@@ -3,13 +3,18 @@ require.config({
         'instructioncontainer': '../../tools/splash/instruction-container',
         'instructiondragbutton': '../../tools/splash/instruction-drag-button',
         'instructionticker': '../../tools/splash/instruction-ticker',
+        'instructiondraggable': '../../tools/splash/instruction-draggable',
         'constants': '../../tools/splash/constants'
     }
 });
 
-define(['exports', 'cocos2d', 'qlayer', 'toollayer', 'instructioncontainer', 'instructiondragbutton', 'instructionticker' ], function (exports, cc, QLayer, ToolLayer, InstructionContainer, InstructionDragButton, InstructionTicker) {
+define(['exports', 'cocos2d', 'qlayer', 'toollayer', 'instructioncontainer', 'instructiondragbutton', 'instructionticker', 'constants' ], function (exports, cc, QLayer, ToolLayer, InstructionContainer, InstructionDragButton, InstructionTicker, constants) {
     'use strict';
 
+    var InstructionTypes = constants["InstructionTypes"];
+
+    var defaultButtonZOrder = 1;
+    var foregroundZOrder = 100;
 
     window.bl.toolTag = 'splash';
     var Tool = ToolLayer.extend({
@@ -46,16 +51,73 @@ define(['exports', 'cocos2d', 'qlayer', 'toollayer', 'instructioncontainer', 'in
 
             this.setBackground(window.bl.getResource('deep_water_background'));
 
-            var instructionContainer = new InstructionContainer();
-            instructionContainer.setPosition(this._windowSize.width/2, this._windowSize.height/2);
-            instructionContainer.setZOrder(1);
-            this.addChild(instructionContainer);
+            this.instructionContainer = new InstructionContainer();
+            this.instructionContainer.setPosition(this._windowSize.width/2, this.instructionContainer.getContentSize().height/2 + 10);
+            this.instructionContainer.setZOrder(1);
+            this.addChild(this.instructionContainer);
 
-            var instructionTicker = new InstructionTicker();
-            instructionTicker.setPosition(this._windowSize.width/2, 100);
-            this.addChild(instructionTicker);
+            this.setupInstructionButtons();
+
+            this.instructionTicker = new InstructionTicker();
+            this.instructionTicker.setPosition(this._windowSize.width/2, 175);
+            this.addChild(this.instructionTicker);
         },
 
+        setupInstructionButtons:function() {
+            var self = this;
+            var defaultButtonZOrder = 1;
+            _.each(InstructionTypes, function(type) {
+                var instructionButton = new InstructionDragButton()
+                instructionButton.initWithType(type);
+                var positionInContainer = self.instructionContainer.getPositionForInstruction(type);
+                var positionInWorld = self.instructionContainer.convertToWorldSpace(positionInContainer);
+                instructionButton.setPosition(positionInWorld);
+                instructionButton.setZOrder(defaultButtonZOrder);
+                self.addChild(instructionButton);
+
+                self.setInstructionTouchFunctions(instructionButton);
+            })
+        },
+
+        setInstructionTouchFunctions:function(button) {
+            var self = this;
+
+            var highlighting = false;
+
+            button.onTouchDown(function() {
+                this.setVisible(true);
+                self.reorderChild(button, foregroundZOrder);
+            });
+
+            button.onMoved(function(touchLocation) {
+                if (self.instructionTicker.touched(touchLocation)) {
+                    var touchRelative = self.instructionTicker.convertToNodeSpace(touchLocation);
+                    self.instructionTicker.highlightHovered(touchRelative);
+                    highlighting = true;
+                } else {
+                    if (highlighting) {
+                        self.instructionTicker.clearHighlight();
+                        highlighting = false;
+                    };
+                };
+            });
+
+            button.onMoveEnded(function(touchLocation) {
+                self.reorderChild(button, defaultButtonZOrder);
+                if (self.instructionTicker.touched(touchLocation)) {
+                    self.instructionTicker.dropInInstruction(this, touchLocation);
+                    button.setupDraggable();
+                    self.setInstructionTouchFunctions(button);
+                } else {
+                    this.setVisible(false);
+                    this.returnToHomePosition();
+                };
+                if (highlighting) {
+                    self.instructionTicker.clearHighlight();
+                    highlighting = false;
+                };
+            });
+        }
     });
 
     ToolLayer.create = function () {

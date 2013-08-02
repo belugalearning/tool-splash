@@ -1,4 +1,4 @@
-define(['draggable', 'constants'], function(Draggable, constants) {
+define(['instructiondraggable', 'constants'], function(InstructionDraggable, constants) {
 
 	var InstructionTypes = constants["InstructionTypes"];
 
@@ -8,49 +8,40 @@ define(['draggable', 'constants'], function(Draggable, constants) {
 			this._super();
 			this.draggable;
 			this.dummyButton;
+			this.startZOrder;
+			this.type;
 
 			this.moving = false;
 		},
 
-		initWithInstructionType:function(type) {
-			this.initWithFile(window.bl.getResource(type["filename"]));
-		},
+		initWithType:function(type) {
+			this.type = type;
 
-		initWithFile:function(filename) {
-			var self = this;
-
-			this.draggable = new Draggable();
-			this.draggable.initWithFile(filename);
-			this.draggable.setZoomOnTouchDown(false);
-			this.draggable.setVisible(false);
-			this.draggable.setZOrder(1);
-			this.addChild(this.draggable);
-
-			this.draggable.onTouchDown(function() {
-				this.setVisible(true);
-				self.getParent().reorderChild(self, 100);
-			});
-
-			this.draggable.onMoved(function() {
-
-			});
-
-			this.draggable.onMoveEnded(function() {
-				self.getParent().reorderChild(self, 0);
-				this.setVisible(false);
-				this.returnToHomePosition();
-			});
+			this.setupDraggable();
 
 			this.dummyButton = new cc.Sprite();
-			this.dummyButton.initWithFile(filename);
+			this.dummyButton.initWithFile(window.bl.getResource(type['filename']));
 			this.addChild(this.dummyButton);
 		},
 
-		_positionAfterMove:function() {
-			this.returnToHomePosition();
+		setupDraggable:function() {
+			this.draggable = new InstructionDraggable();
+			this.draggable.initWithType(this.type);
+			this.draggable.setVisible(false);
+			this.draggable.setZOrder(1);
+			this.addChild(this.draggable);
 		},
-		positionAfterMove:function(positioner) {
-			this._positionAfterMove = positioner;
+
+		onTouchDown:function(cb) {
+			this.draggable.onTouchDown(cb);
+		},
+
+		onMoved:function(cb) {
+			this.draggable.onMoved(cb);
+		},
+
+		onMoveEnded:function(cb) {
+			this.draggable.onMoveEnded(cb);
 		},
 	})
 
