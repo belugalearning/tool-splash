@@ -35,14 +35,14 @@ define(['canvasclippingnode', 'draggable', 'constants'], function(CanvasClipping
 
 				space.instruction = null;
 				space.setInstruction = function(instruction) {
-					if (type !== null) {
+					if (instruction !== null) {
+						if (this.instruction) {
+							this.instruction.removeFromParent();
+						};
 						this.addChild(instruction);
 						this.emptySpace.setVisible(false);
 						this.instruction = instruction;
 					} else {
-						if (this.instruction) {
-							this.instruction.removeFromParent();
-						};
 						this.emptySpace.setVisible(true);
 						this.instruction = null;
 					};
@@ -58,30 +58,30 @@ define(['canvasclippingnode', 'draggable', 'constants'], function(CanvasClipping
 		},
 
 		positionForDrop:function(touchLocation) {
-			var dropSpace;
+			var dropIndex;
 			for (var i = 0; i < this.spaces.length; i++) {
 				var space = this.spaces[i];
 				var leftPosition = cc.pAdd(space.getPosition(), cc.p(-32, 0));
 				if (space.instruction === null) {
-					dropSpace = space;
+					dropIndex = i;
 					break;
 				} else if (Math.abs(leftPosition.x - touchLocation.x) < 34 && Math.abs(leftPosition.y - touchLocation.y) < 34) {
-					dropSpace = space;
+					dropIndex = i;
 					break;
 				};
 			};
-			return dropSpace;
+			return dropIndex;
 		},
 
 		highlightHovered:function(touchLocation) {
-			var dropSpace = this.positionForDrop(touchLocation);
+			var highlightSpace = this.spaces[this.positionForDrop(touchLocation)];
 			this.clearHighlight();
-			if (dropSpace.instruction === null) {
-				this.highlightSpace(dropSpace);
+			if (highlightSpace.instruction === null) {
+				this.highlightSpace(highlightSpace);
 			} else {
-				this.highlightBeforeSpace(dropSpace);
+				this.highlightBeforeSpace(highlightSpace);
 			};
-			dropSpace.addChild(this.highlight);
+			highlightSpace.addChild(this.highlight);
 		},
 
 		highlightSpace:function(space) {
@@ -101,14 +101,15 @@ define(['canvasclippingnode', 'draggable', 'constants'], function(CanvasClipping
 			};
 		},
 
-		dropInInstruction:function() {
-			console.log("dropped!");
+		dropInInstruction:function(instruction, touchLocation) {
+			var dropIndex = this.positionForDrop(touchLocation);
+			this.insertInstructionInPosition(instruction, dropIndex);
 		},
 
 		insertInstructionInPosition:function(instruction, positionIndex) {
-			this.instruction.splice(positionIndex, 0, instruction);
+			this.instructions.splice(positionIndex, 0, instruction);
 			for (var i = 0; i < this.instructions.length; i++) {
-				this.space[i].setInstruction(this.instructions[i]);
+				this.spaces[i].setInstruction(this.instructions[i]);
 			};
 		},
 

@@ -84,6 +84,8 @@ define(['exports', 'cocos2d', 'qlayer', 'toollayer', 'instructioncontainer', 'in
 
             var highlighting = false;
 
+            var replaced = false;
+
             button.onTouchDown(function() {
                 this.setVisible(true);
                 self.reorderChild(button, foregroundZOrder);
@@ -105,12 +107,19 @@ define(['exports', 'cocos2d', 'qlayer', 'toollayer', 'instructioncontainer', 'in
             button.onMoveEnded(function(touchLocation) {
                 self.reorderChild(button, defaultButtonZOrder);
                 if (self.instructionTicker.touched(touchLocation)) {
-                    self.instructionTicker.dropInInstruction(this, touchLocation);
+                    var touchRelative = self.instructionTicker.convertToNodeSpace(touchLocation);
+                    this.removeFromParent();
+                    self.instructionTicker.dropInInstruction(this, touchRelative);
                     button.setupDraggable();
                     self.setInstructionTouchFunctions(button);
+                    replaced = true;
                 } else {
-                    this.setVisible(false);
-                    this.returnToHomePosition();
+                    if (replaced) {
+                        this.removeFromParent();
+                    } else {
+                        this.setVisible(false);
+                        this.returnToHomePosition();
+                    };
                 };
                 if (highlighting) {
                     self.instructionTicker.clearHighlight();
