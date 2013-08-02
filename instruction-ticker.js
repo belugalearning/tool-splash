@@ -39,6 +39,7 @@ define(['canvasclippingnode', 'draggable', 'constants'], function(CanvasClipping
 						if (this.instruction) {
 							this.instruction.removeFromParent();
 						};
+						instruction.setPosition(0,0);
 						this.addChild(instruction);
 						this.emptySpace.setVisible(false);
 						this.instruction = instruction;
