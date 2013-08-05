@@ -25,6 +25,7 @@ define(['canvasclippingnode', 'draggable', 'constants'], function(CanvasClipping
 			for (var i = 0; i < 26; i++) {
 				var space = new cc.Node();
 				space.setPosition(this.getPositionForInstructionSpace(i));
+				space.positionIndex = i;
 				clipper.addChild(space);
 				this.spaces.push(space);
 				
@@ -40,6 +41,7 @@ define(['canvasclippingnode', 'draggable', 'constants'], function(CanvasClipping
 							this.instruction.removeFromParent();
 						};
 						instruction.setPosition(0,0);
+						instruction.positionIndex = this.positionIndex;
 						this.addChild(instruction);
 						this.emptySpace.setVisible(false);
 						this.instruction = instruction;
@@ -102,17 +104,43 @@ define(['canvasclippingnode', 'draggable', 'constants'], function(CanvasClipping
 			};
 		},
 
-		dropInInstruction:function(instruction, touchLocation) {
-			var dropIndex = this.positionForDrop(touchLocation);
-			this.insertInstructionInPosition(instruction, dropIndex);
-		},
-
-		insertInstructionInPosition:function(instruction, positionIndex) {
-			this.instructions.splice(positionIndex, 0, instruction);
+		positionInstructions:function() {
 			for (var i = 0; i < this.instructions.length; i++) {
 				this.spaces[i].setInstruction(this.instructions[i]);
 			};
 		},
+
+		dropInInstructionBox:function(instructionBox, touchLocation) {
+			var dropIndex = this.positionForDrop(touchLocation);
+			this.insertInstructionBoxInPosition(instructionBox, dropIndex);
+			this.setInstructionTouchFunctions(instructionBox);
+		},
+
+		insertInstructionBoxInPosition:function(instructionBox, positionIndex) {
+			this.instructions.splice(positionIndex, 0, instructionBox);
+			this.positionInstructions();
+		},
+
+		setInstructionTouchFunctions:function(instructionBox) {
+			var self = this;
+
+			var highlighting = false;
+
+			instructionBox.onTouchDown(function(touchLocation) {
+				this.removeFromParent();
+				self.addChild(this);
+				var position = this.convertToNodeSpace(touchLocation);
+				this.setPosition(position);
+				var space = self.spaces[this.positionIndex];
+				space.setInstruction(null);
+				self.positionInstructions();
+			});
+
+
+/*			instructionBox.onMoveEnded(function(touchLocation) {
+
+			})
+*/		},
 
 	})
 
