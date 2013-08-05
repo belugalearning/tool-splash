@@ -2,13 +2,14 @@ require.config({
     paths: {
         'instructioncontainer': '../../tools/splash/instruction-container',
         'instructiondragbutton': '../../tools/splash/instruction-drag-button',
+        'instructiondraggable': '../../tools/splash/instruction-draggable',
         'instructionticker': '../../tools/splash/instruction-ticker',
         'instructiondraggable': '../../tools/splash/instruction-draggable',
         'constants': '../../tools/splash/constants'
     }
 });
 
-define(['exports', 'cocos2d', 'qlayer', 'toollayer', 'instructioncontainer', 'instructiondragbutton', 'instructionticker', 'constants' ], function (exports, cc, QLayer, ToolLayer, InstructionContainer, InstructionDragButton, InstructionTicker, constants) {
+define(['exports', 'cocos2d', 'qlayer', 'toollayer', 'instructioncontainer', 'instructiondragbutton', 'instructiondraggable', 'instructionticker', 'constants' ], function (exports, cc, QLayer, ToolLayer, InstructionContainer, InstructionDragButton, InstructionDraggable, InstructionTicker, constants) {
     'use strict';
 
     var InstructionTypes = constants["InstructionTypes"];

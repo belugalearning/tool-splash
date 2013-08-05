@@ -37,10 +37,11 @@ define(['canvasclippingnode', 'draggable', 'constants'], function(CanvasClipping
 				space.instruction = null;
 				space.setInstruction = function(instruction) {
 					if (instruction !== null) {
-						if (this.instruction) {
+/*						if (this.instruction) {
 							this.instruction.removeFromParent();
 						};
-						instruction.setPosition(0,0);
+						instruction.removeFromParent();
+*/						instruction.setPosition(0,0);
 						instruction.positionIndex = this.positionIndex;
 						this.addChild(instruction);
 						this.emptySpace.setVisible(false);
@@ -106,7 +107,11 @@ define(['canvasclippingnode', 'draggable', 'constants'], function(CanvasClipping
 
 		positionInstructions:function() {
 			for (var i = 0; i < this.instructions.length; i++) {
-				this.spaces[i].setInstruction(this.instructions[i]);
+				this.instructions[i].removeFromParent();
+			};
+			for (var i = 0; i < this.spaces.length; i++) {
+				var instruction = this.instructions[i] || null;
+				this.spaces[i].setInstruction(instruction);
 			};
 		},
 
@@ -129,13 +134,25 @@ define(['canvasclippingnode', 'draggable', 'constants'], function(CanvasClipping
 			instructionBox.onTouchDown(function(touchLocation) {
 				this.removeFromParent();
 				self.addChild(this);
-				var position = this.convertToNodeSpace(touchLocation);
+				var position = self.convertToNodeSpace(touchLocation);
 				this.setPosition(position);
-				var space = self.spaces[this.positionIndex];
-				space.setInstruction(null);
+				self.instructions.splice(this.positionIndex, 1);
 				self.positionInstructions();
 			});
 
+            instructionBox.onMoveEnded(function(touchLocation) {
+                if (self.touched(touchLocation)) {
+                    var touchRelative = self.instructionTicker.convertToNodeSpace(touchLocation);
+                    this.removeFromParent();
+	                self.dropInInstructionBox(this, touchRelative);
+                } else {
+                    this.removeFromParent();
+                };
+                if (highlighting) {
+                    self.instructionTicker.clearHighlight();
+                    highlighting = false;
+                };
+            });
 
 /*			instructionBox.onMoveEnded(function(touchLocation) {
 
