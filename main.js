@@ -68,15 +68,17 @@ define(['exports', 'cocos2d', 'qlayer', 'toollayer', 'instructioncontainer', 'in
             var self = this;
             var defaultButtonZOrder = 1;
             _.each(InstructionTypes, function(type) {
-                var instructionButton = new InstructionDragButton()
-                instructionButton.initWithType(type);
-                var positionInContainer = self.instructionContainer.getPositionForInstruction(type);
-                var positionInWorld = self.instructionContainer.convertToWorldSpace(positionInContainer);
-                instructionButton.setPosition(positionInWorld);
-                instructionButton.setZOrder(defaultButtonZOrder);
-                self.addChild(instructionButton);
+                if (type["include_in_container"]) {
+                    var instructionButton = new InstructionDragButton()
+                    instructionButton.initWithType(type);
+                    var positionInContainer = self.instructionContainer.getPositionForInstruction(type);
+                    var positionInWorld = self.instructionContainer.convertToWorldSpace(positionInContainer);
+                    instructionButton.setPosition(positionInWorld);
+                    instructionButton.setZOrder(defaultButtonZOrder);
+                    self.addChild(instructionButton);
 
-                self.setInstructionTouchFunctions(instructionButton);
+                    self.setInstructionTouchFunctions(instructionButton);
+                };
             })
         },
 
@@ -103,12 +105,25 @@ define(['exports', 'cocos2d', 'qlayer', 'toollayer', 'instructioncontainer', 'in
                 };
             });
 
+
             button.onMoveEnded(function(touchLocation) {
                 self.reorderChild(button, defaultButtonZOrder);
                 if (self.instructionTicker.touched(touchLocation)) {
                     var touchRelative = self.instructionTicker.convertToNodeSpace(touchLocation);
                     this.removeFromParent();
-                    self.instructionTicker.dropInInstructionBox(this, touchRelative);
+                    if (this.type === InstructionTypes.LOOP) {
+                        var openBracket = new InstructionDraggable();
+                        openBracket.initWithType(InstructionTypes.OPEN_BRACKET);
+                        self.instructionTicker.dropInInstructionBox(openBracket, touchRelative);
+                        var closeBracket = new InstructionDraggable();
+                        closeBracket.initWithType(InstructionTypes.CLOSE_BRACKET);
+                        self.instructionTicker.dropInInstructionBox(closeBracket, touchRelative);
+                        openBracket.linked = [closeBracket];
+                        closeBracket.linked = [openBracket];
+                    } else {
+                        self.instructionTicker.dropInInstructionBox(this, touchRelative);
+                        this.linked = [];
+                    };
                     button.setupDraggable();
                     self.setInstructionTouchFunctions(button);
                 } else {
