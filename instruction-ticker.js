@@ -19,8 +19,9 @@ define(['canvasclippingnode', 'draggable', 'scrollbar', 'constants'], function(C
 			this.addChild(clipper);
 
 			var spacesPerRow = 13;
-			this.numberOfRows = 10;
-			var spacing = 12;
+			this.numberOfRows = 4;
+			var verticalSpacing = 10;
+			var horizontalSpacing = 12;
 			this.spaceHeight = null;
 			this.spaceWidth = null;
 
@@ -45,10 +46,10 @@ define(['canvasclippingnode', 'draggable', 'scrollbar', 'constants'], function(C
 				space.addChild(emptySpace);
 				space.emptySpace = emptySpace;
 				if (this.spaceHeight === null) {
-					this.spaceHeight = emptySpace.getContentSize().height + spacing;
+					this.spaceHeight = emptySpace.getContentSize().height + verticalSpacing;
 				};
 				if (this.spaceWidth === null) {
-					this.spaceWidth = emptySpace.getContentSize().width + spacing;
+					this.spaceWidth = emptySpace.getContentSize().width + horizontalSpacing;
 				};
 
 				space.setPosition(this.getPositionForInstructionSpace(i));
