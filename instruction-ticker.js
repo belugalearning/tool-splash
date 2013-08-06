@@ -1,19 +1,34 @@
-define(['canvasclippingnode', 'draggable', 'constants'], function(CanvasClippingNode, Draggable, constants) {
+define(['canvasclippingnode', 'draggable', 'scrollbar', 'constants'], function(CanvasClippingNode, Draggable, ScrollBar, constants) {
 	'use strict';
 
 	var InstructionTypes = constants["InstructionTypes"];
 
 	var InstructionTicker = cc.Sprite.extend({
 		ctor:function() {
+			var self = this;
 			this._super();
 			this.initWithFile(window.bl.getResource('insert_panel'));
 			var clipper = new CanvasClippingNode();
 			var contentSize = this.getContentSize();
+			var boxWidth = contentSize.width - 60;
+			var boxHeight = contentSize.height - 29;
 			clipper.drawPathToClip = function() {
-				this.ctx.rect(15, -146, contentSize.width - 60, contentSize.height - 29);
+				this.ctx.rect(15, -146, boxWidth, boxHeight);
 			};
 			var testBox = new cc.Sprite();
 			this.addChild(clipper);
+
+			var spacesPerRow = 13;
+			this.numberOfRows = 10;
+			var spacing = 12;
+			this.spaceHeight = null;
+			this.spaceWidth = null;
+
+			var spacesNode = new cc.Node();
+			spacesNode.height = function() {
+				return self.numberOfRows * self.spaceHeight;
+			}
+			clipper.addChild(spacesNode);
 
 			this.highlight = new cc.Sprite();
 			this.highlight.initWithFile(window.bl.getResource('single_white_pixel'));
@@ -22,26 +37,31 @@ define(['canvasclippingnode', 'draggable', 'constants'], function(CanvasClipping
 			this.instructions = [];
 
 			this.spaces = [];
-			for (var i = 0; i < 26; i++) {
+			for (var i = 0; i < this.numberOfRows * spacesPerRow; i++) {
 				var space = new cc.Node();
-				space.setPosition(this.getPositionForInstructionSpace(i));
-				space.positionIndex = i;
-				clipper.addChild(space);
-				this.spaces.push(space);
-				
+
 				var emptySpace = new cc.Sprite();
 				emptySpace.initWithFile(window.bl.getResource('insert_box'));
 				space.addChild(emptySpace);
 				space.emptySpace = emptySpace;
+				if (this.spaceHeight === null) {
+					this.spaceHeight = emptySpace.getContentSize().height + spacing;
+				};
+				if (this.spaceWidth === null) {
+					this.spaceWidth = emptySpace.getContentSize().width + spacing;
+				};
+
+				space.setPosition(this.getPositionForInstructionSpace(i));
+				space.positionIndex = i;
+				spacesNode.addChild(space);
+				this.spaces.push(space);
+				
 
 				space.instruction = null;
 				space.setInstruction = function(instruction) {
 					if (instruction !== null) {
-/*						if (this.instruction) {
-							this.instruction.removeFromParent();
-						};
 						instruction.removeFromParent();
-*/						instruction.setPosition(0,0);
+						instruction.setPosition(0,0);
 						instruction.positionIndex = this.positionIndex;
 						this.addChild(instruction);
 						this.emptySpace.setVisible(false);
@@ -52,13 +72,53 @@ define(['canvasclippingnode', 'draggable', 'constants'], function(CanvasClipping
 					};
 				};
 			};
+
+			var scrollBarUpperY = 140;
+			var scrollBarLowerY = 28;
+			var scrollBarX = 914;
+
+			var scrollBar = new ScrollBar();
+			this.addChild(scrollBar);
+
+			scrollBar.setDragAreaRect(cc.RectMake(scrollBarX, scrollBarLowerY, 0, scrollBarUpperY - scrollBarLowerY));
+
+			scrollBar.lowerLimit = function() {
+				return scrollBarLowerY + this.getHeight()/2;
+			};
+
+			scrollBar.upperLimit = function() {
+				return scrollBarUpperY - this.getHeight()/2;
+			}
+
+			scrollBar.setHeightForNumberOfRows = function() {
+				var scrollBarSpace = scrollBarUpperY - scrollBarLowerY;
+				var height = (scrollBarSpace * boxHeight / spacesNode.height()).putInBounds(20, scrollBarSpace);
+				this.setHeight(height);
+			};
+			scrollBar.setHeightForNumberOfRows();
+			scrollBar.setPosition(cc.p(scrollBarX, scrollBarUpperY - scrollBar.height/2));
+
+			scrollBar.scrollSpaceNode = function() {
+				var height = this.getHeight();
+				var scrollProportion = (scrollBar.upperLimit() - this.getPosition().y)/(scrollBar.upperLimit() - scrollBar.lowerLimit());
+				spacesNode.setPosition(0, scrollProportion * (spacesNode.height() - 2 * self.spaceHeight));
+
+			};
+
+			scrollBar.onTouchDown(function() {
+				this.scrollSpaceNode();
+			});
+
+			scrollBar.onMoved(function() {
+				this.scrollSpaceNode();
+			});
 		},
 
 		getPositionForInstructionSpace:function(index) {
 			var positionsPerRow = 13;
 			var row = Math.floor(index/positionsPerRow);
 			var column = index % positionsPerRow;
-			return cc.p(53 + column * 67, 115 - row * 65);
+			return cc.p(53 + column * this.spaceWidth, 115 - row * this.spaceHeight);
 		},
 
 		positionForDrop:function(touchLocation) {
@@ -132,10 +192,10 @@ define(['canvasclippingnode', 'draggable', 'constants'], function(CanvasClipping
 			var highlighting = false;
 
 			instructionBox.onTouchDown(function(touchLocation) {
-				var position = self.convertToNodeSpace(touchLocation);
-				this.setPosition(position);
 				self.removeInstructions([this]);
 				self.addChild(this);
+				var position = self.convertToNodeSpace(touchLocation);
+				this.setPosition(position);
 			});
 
 
