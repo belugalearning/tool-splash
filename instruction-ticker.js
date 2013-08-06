@@ -132,32 +132,49 @@ define(['canvasclippingnode', 'draggable', 'constants'], function(CanvasClipping
 			var highlighting = false;
 
 			instructionBox.onTouchDown(function(touchLocation) {
-				this.removeFromParent();
-				self.addChild(this);
 				var position = self.convertToNodeSpace(touchLocation);
 				this.setPosition(position);
-				self.instructions.splice(this.positionIndex, 1);
-				self.positionInstructions();
+				self.removeInstructions([this]);
+				self.addChild(this);
 			});
 
-            instructionBox.onMoveEnded(function(touchLocation) {
+
+            instructionBox.onMoved(function(touchLocation) {
                 if (self.touched(touchLocation)) {
-                    var touchRelative = self.instructionTicker.convertToNodeSpace(touchLocation);
-                    this.removeFromParent();
-	                self.dropInInstructionBox(this, touchRelative);
+                    var touchRelative = self.convertToNodeSpace(touchLocation);
+                    self.highlightHovered(touchRelative);
+                    highlighting = true;
                 } else {
-                    this.removeFromParent();
-                };
-                if (highlighting) {
-                    self.instructionTicker.clearHighlight();
-                    highlighting = false;
+                    if (highlighting) {
+                        self.clearHighlight();
+                        highlighting = false;
+                    };
                 };
             });
 
-/*			instructionBox.onMoveEnded(function(touchLocation) {
+            instructionBox.onMoveEnded(function(touchLocation) {
+                if (self.touched(touchLocation)) {
+                    var touchRelative = self.convertToNodeSpace(touchLocation);
+                    this.removeFromParent();
+	                self.dropInInstructionBox(this, touchRelative);
+                } else {
+                	self.removeInstructions([this].concat(this.linked));
+                };
+                if (highlighting) {
+                    self.clearHighlight();
+                    highlighting = false;
+                };
+            });
+		},
 
+		removeInstructions:function(instructions) {
+			var self = this;
+			this.instructions = _.difference(self.instructions, instructions);
+			_.each(instructions, function(instruction) {
+				instruction.removeFromParent();
 			})
-*/		},
+			this.positionInstructions();
+		},
 
 	})
 
