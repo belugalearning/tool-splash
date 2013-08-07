@@ -10,35 +10,130 @@ define(['canvasclippingnode', 'draggable', 'scrollbar', 'constants'], function(C
 			this.initWithFile(window.bl.getResource('insert_panel'));
 			var clipper = new CanvasClippingNode();
 			var contentSize = this.getContentSize();
-			var boxWidth = contentSize.width - 60;
-			var boxHeight = contentSize.height - 29;
+			this.boxWidth = contentSize.width - 60;
+			this.boxHeight = contentSize.height - 29;
 			clipper.drawPathToClip = function() {
-				this.ctx.rect(15, -146, boxWidth, boxHeight);
+				this.ctx.rect(15, -146, self.boxWidth, self.boxHeight);
 			};
 			var testBox = new cc.Sprite();
 			this.addChild(clipper);
 
-			var spacesPerRow = 13;
-			this.numberOfRows = 4;
-			var verticalSpacing = 10;
-			var horizontalSpacing = 12;
+			this.spacesPerRow = 13;
+			this.startingNumberOfRows = 2;
+			this.verticalSpacing = 10;
+			this.horizontalSpacing = 12;
 			this.spaceHeight = null;
 			this.spaceWidth = null;
 
-			var spacesNode = new cc.Node();
+
+			this.spacesNode = new cc.Node();
+			var spacesNode = this.spacesNode;
 			spacesNode.height = function() {
-				return self.numberOfRows * self.spaceHeight;
-			}
-			clipper.addChild(spacesNode);
+				return self.spaceRows.length * self.spaceHeight;
+			};
+			clipper.addChild(this.spacesNode);
+			// this.addChild(this.spacesNode);
+
+			this.instructions = [];
+
+			this.spaces;
+			this.spaceRows = [];
+
+			this.setupScrollBar();
+			this.setupSpaceRows();
 
 			this.highlight = new cc.Sprite();
 			this.highlight.initWithFile(window.bl.getResource('single_white_pixel'));
 			this.highlight.setOpacity(128);
+		},
 
-			this.instructions = [];
+		setupScrollBar:function() {
+			var self = this;
 
-			this.spaces = [];
-			for (var i = 0; i < this.numberOfRows * spacesPerRow; i++) {
+			var scrollBarUpperY = 140;
+			var scrollBarLowerY = 28;
+			var scrollBarX = 914;
+
+			var scrollBar = new ScrollBar();
+			this.scrollBar = scrollBar;
+			this.addChild(scrollBar);
+
+			scrollBar.setDragAreaRect(cc.RectMake(scrollBarX, scrollBarLowerY, 0, scrollBarUpperY - scrollBarLowerY));
+
+			scrollBar.scrollProportion = 0;
+
+			scrollBar.lowerLimit = function() {
+				return scrollBarLowerY + this.getHeight()/2;
+			};
+
+			scrollBar.upperLimit = function() {
+				return scrollBarUpperY - this.getHeight()/2;
+			}
+
+			scrollBar.scrollToProportion = function(proportion) {
+				this.scrollProportion = Math.min(proportion, 1);
+				scrollBar.setPosition(cc.p(scrollBarX, this.upperLimit() - this.scrollProportion * (this.upperLimit() - this.lowerLimit())));
+				this.scrollSpaceNode();
+			},
+
+			scrollBar.processUserScroll = function() {
+				this.adjustProportion();
+				this.scrollSpaceNode();
+			}
+
+			scrollBar.adjustProportion = function() {
+				var height = this.getHeight();
+				this.scrollProportion = (scrollBar.upperLimit() - this.getPosition().y)/(scrollBar.upperLimit() - scrollBar.lowerLimit());
+			}
+
+			scrollBar.scrollSpaceNode = function() {
+				self.spacesNode.setPosition(0, this.scrollProportion * (self.spacesNode.height() - 2 * self.spaceHeight));
+			};
+
+			scrollBar.setHeightForNumberOfRows = function() {
+				var scrollBarSpace = scrollBarUpperY - scrollBarLowerY;
+				var height = (scrollBarSpace * self.boxHeight / self.spacesNode.height()).putInBounds(20, scrollBarSpace);
+				this.setHeight(height);
+				this.scrollToProportion(this.scrollProportion);
+			};
+
+			scrollBar.getNodeHeight = function() {
+				return this.scrollProportion * (self.spacesNode.height() - self.boxHeight);
+			},
+
+			scrollBar.scrollToHeight = function(height) {
+				var proportion = height/(self.spacesNode.height() - self.boxHeight);
+				this.scrollToProportion(proportion);
+			};
+
+			scrollBar.scrollToRow = function(rowIndex) {
+				var height = rowIndex * self.boxHeight;
+				this.scrollToHeight(height);
+			};
+
+			scrollBar.setHeightForNumberOfRows();
+
+			scrollBar.onTouchDown(function() {
+				this.processUserScroll();
+			});
+
+			scrollBar.onMoved(function() {
+				this.processUserScroll();
+			});
+		},
+
+		setupSpaceRows:function() {
+			for (var i = 0; i < this.startingNumberOfRows; i++) {
+				this.addSpaceRow(i);
+			};
+			this.processChangeInNumberOfRows();
+		},
+
+		addSpaceRow:function(index) {
+			var spaceRow = new cc.Node();
+			spaceRow.spaces = [];
+			for (var j = 0; j < this.spacesPerRow; j++) {
+
 				var space = new cc.Node();
 
 				var emptySpace = new cc.Sprite();
@@ -46,17 +141,16 @@ define(['canvasclippingnode', 'draggable', 'scrollbar', 'constants'], function(C
 				space.addChild(emptySpace);
 				space.emptySpace = emptySpace;
 				if (this.spaceHeight === null) {
-					this.spaceHeight = emptySpace.getContentSize().height + verticalSpacing;
+					this.spaceHeight = emptySpace.getContentSize().height + this.verticalSpacing;
 				};
 				if (this.spaceWidth === null) {
-					this.spaceWidth = emptySpace.getContentSize().width + horizontalSpacing;
+					this.spaceWidth = emptySpace.getContentSize().width + this.horizontalSpacing;
 				};
 
-				space.setPosition(this.getPositionForInstructionSpace(i));
-				space.positionIndex = i;
-				spacesNode.addChild(space);
-				this.spaces.push(space);
-				
+				space.setPosition(53 + j * this.spaceWidth, 0);
+				space.positionIndex = index * this.spacesPerRow + j;
+				spaceRow.addChild(space);
+				spaceRow.spaces.push(space);
 
 				space.instruction = null;
 				space.setInstruction = function(instruction) {
@@ -73,46 +167,26 @@ define(['canvasclippingnode', 'draggable', 'scrollbar', 'constants'], function(C
 					};
 				};
 			};
+			this.spaceRows.push(spaceRow);
+			spaceRow.setPosition(0, 115 - index * this.spaceHeight);
+			this.spacesNode.addChild(spaceRow);
 
-			var scrollBarUpperY = 140;
-			var scrollBarLowerY = 28;
-			var scrollBarX = 914;
+		},
 
-			var scrollBar = new ScrollBar();
-			this.addChild(scrollBar);
+		removeLastSpaceRow:function() {
+			var lastRow = this.spaceRows[this.spaceRows.length - 1];
+			lastRow.removeFromParent();
+			this.spaceRows.splice(this.spaceRows.length - 1, 1);
+		},
 
-			scrollBar.setDragAreaRect(cc.RectMake(scrollBarX, scrollBarLowerY, 0, scrollBarUpperY - scrollBarLowerY));
+		processChangeInNumberOfRows:function() {
+			this.correctSpaces();
+			this.scrollBar.setHeightForNumberOfRows();
+		},
 
-			scrollBar.lowerLimit = function() {
-				return scrollBarLowerY + this.getHeight()/2;
-			};
-
-			scrollBar.upperLimit = function() {
-				return scrollBarUpperY - this.getHeight()/2;
-			}
-
-			scrollBar.setHeightForNumberOfRows = function() {
-				var scrollBarSpace = scrollBarUpperY - scrollBarLowerY;
-				var height = (scrollBarSpace * boxHeight / spacesNode.height()).putInBounds(20, scrollBarSpace);
-				this.setHeight(height);
-			};
-			scrollBar.setHeightForNumberOfRows();
-			scrollBar.setPosition(cc.p(scrollBarX, scrollBarUpperY - scrollBar.height/2));
-
-			scrollBar.scrollSpaceNode = function() {
-				var height = this.getHeight();
-				var scrollProportion = (scrollBar.upperLimit() - this.getPosition().y)/(scrollBar.upperLimit() - scrollBar.lowerLimit());
-				spacesNode.setPosition(0, scrollProportion * (spacesNode.height() - 2 * self.spaceHeight));
-
-			};
-
-			scrollBar.onTouchDown(function() {
-				this.scrollSpaceNode();
-			});
-
-			scrollBar.onMoved(function() {
-				this.scrollSpaceNode();
-			});
+		correctSpaces:function() {
+			var self = this;
+			this.spaces =  _.reduce(self.spaceRows, function(memo, spaceRow) {return memo.concat(spaceRow.spaces)}, []);
 		},
 
 		getPositionForInstructionSpace:function(index) {
@@ -124,13 +198,15 @@ define(['canvasclippingnode', 'draggable', 'scrollbar', 'constants'], function(C
 
 		positionForDrop:function(touchLocation) {
 			var dropIndex;
+			var leftPositionRelativeToSpace = cc.p(-this.spaceWidth/2, 0);
 			for (var i = 0; i < this.spaces.length; i++) {
 				var space = this.spaces[i];
-				var leftPosition = cc.pAdd(space.getPosition(), cc.p(-32, 0));
+				var leftPositionWorld = space.convertToWorldSpace(leftPositionRelativeToSpace);
+				var leftPosition = this.spacesNode.convertToNodeSpace(leftPositionWorld);
 				if (space.instruction === null) {
 					dropIndex = i;
 					break;
-				} else if (Math.abs(leftPosition.x - touchLocation.x) < 34 && Math.abs(leftPosition.y - touchLocation.y) < 34) {
+				} else if (Math.abs(leftPosition.x - touchLocation.x) < this.spaceWidth/2 && Math.abs(leftPosition.y - touchLocation.y) < this.spaceHeight/2) {
 					dropIndex = i;
 					break;
 				};
@@ -174,6 +250,26 @@ define(['canvasclippingnode', 'draggable', 'scrollbar', 'constants'], function(C
 				var instruction = this.instructions[i] || null;
 				this.spaces[i].setInstruction(instruction);
 			};
+			var totalNumberOfRows = this.spaceRows.length;
+			var numberOfRowsUsed = Math.ceil(this.instructions.length/this.spacesPerRow);
+			if (numberOfRowsUsed >= totalNumberOfRows) {
+				// this.addSpaceRow(totalNumberOfRows);
+				this.changeSpaceRows(true);
+			} else if (numberOfRowsUsed <= totalNumberOfRows - 2 && numberOfRowsUsed >= 1) {
+				// this.removeLastSpaceRow();
+				this.changeSpaceRows(false);
+			};
+		},
+
+		changeSpaceRows:function(increase) {
+			var height = this.scrollBar.getNodeHeight();
+			if (increase) {
+				this.addSpaceRow(this.spaceRows.length);
+			} else {
+				this.removeLastSpaceRow();
+			};
+			this.processChangeInNumberOfRows();
+			this.scrollBar.scrollToHeight(height);
 		},
 
 		dropInInstructionBox:function(instructionBox, touchLocation) {
