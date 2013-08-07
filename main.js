@@ -6,11 +6,12 @@ require.config({
         'instructionticker': '../../tools/splash/instruction-ticker',
         'instructiondraggable': '../../tools/splash/instruction-draggable',
         'scrollbar': '../../tools/splash/scroll-bar',
+        'splashnode': '../../tools/splash/splash-node',
         'constants': '../../tools/splash/constants'
     }
 });
 
-define(['exports', 'cocos2d', 'qlayer', 'toollayer', 'instructioncontainer', 'instructiondragbutton', 'instructiondraggable', 'instructionticker', 'constants' ], function (exports, cc, QLayer, ToolLayer, InstructionContainer, InstructionDragButton, InstructionDraggable, InstructionTicker, constants) {
+define(['exports', 'cocos2d', 'qlayer', 'toollayer', 'instructioncontainer', 'instructiondragbutton', 'instructiondraggable', 'instructionticker', 'splashnode', 'constants' ], function (exports, cc, QLayer, ToolLayer, InstructionContainer, InstructionDragButton, InstructionDraggable, InstructionTicker, SplashNode, constants) {
     'use strict';
 
     var InstructionTypes = constants["InstructionTypes"];
@@ -34,7 +35,7 @@ define(['exports', 'cocos2d', 'qlayer', 'toollayer', 'instructioncontainer', 'in
 
             this._windowSize = cc.Director.getInstance().getWinSize();
 
-            // cc.Director.getInstance().setDisplayStats(false);
+            cc.Director.getInstance().setDisplayStats(true);
 
             this.setQuestion();
 
@@ -63,6 +64,8 @@ define(['exports', 'cocos2d', 'qlayer', 'toollayer', 'instructioncontainer', 'in
             this.instructionTicker = new InstructionTicker();
             this.instructionTicker.setPosition(this._windowSize.width/2, 175);
             this.addChild(this.instructionTicker);
+
+            this.splashNode = new SplashNode();
         },
 
         setupInstructionButtons:function() {
