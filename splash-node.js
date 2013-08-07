@@ -5,13 +5,18 @@ define([], function() {
 		ctor:function() {
 			this._super();
 
+			this.dots = [];
+
 			this.latticeNode;
 			this.setupLatticeNode();
-
-
-
-			// this.arrowNode;
+			
 			// this.drawingNode;
+
+			this.arrowNode;
+			this.arrow;
+			this.setupArrowNode();
+
+
 		},
 
 		setupLatticeNode:function() {
@@ -25,6 +30,7 @@ define([], function() {
 				dot.initWithFile(window.bl.getResource('bubble_dot'));
 				dot.setPosition(latticePoints[i]);
 				this.latticeNode.addChild(dot);
+				this.dots.push(dot);
 
 				dot.highlight = function(highlight) {
 					var color = highlight ? cc.c3b(229, 126, 30) : cc.c3b(255, 255, 255);
@@ -32,6 +38,17 @@ define([], function() {
 				};
 			};
 			this.addChild(this.latticeNode);
+		},
+
+		setupArrowNode:function() {
+			this.arrowNode = new cc.Node();
+
+			this.arrow = new cc.Sprite();
+			this.arrow.initWithFile(window.bl.getResource('arrow'));
+			this.arrow.setPosition(this.dots[48].getPosition());
+			this.arrowNode.addChild(this.arrow);
+
+			this.addChild(this.arrowNode);
 		},
 	});
 
