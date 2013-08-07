@@ -66,6 +66,9 @@ define(['exports', 'cocos2d', 'qlayer', 'toollayer', 'instructioncontainer', 'in
             this.addChild(this.instructionTicker);
 
             this.splashNode = new SplashNode();
+            var topOfTicker = this.instructionTicker.getBoundingBox().origin.y + this.instructionTicker.getBoundingBox().size.height;
+            this.splashNode.setPosition(this.getContentSize().width/2, (topOfTicker + this.getContentSize().height)/2);
+            this.addChild(this.splashNode);
         },
 
         setupInstructionButtons:function() {

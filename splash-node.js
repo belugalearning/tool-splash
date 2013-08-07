@@ -15,11 +15,23 @@ define([], function() {
 		},
 
 		setupLatticeNode:function() {
-			this.width = 500;
-			this.height = 300;
+			this.width = 800;
+			this.height = 450;
 			this.latticeNode = new cc.Node();
 			this.latticeNode.boundary = cc.RectMake(-this.width/2, -this.height/2, this.width, this.height);
-			this.latticeNode.boundary.test();
+			var latticePoints = this.latticeNode.boundary.latticePoints(50, 50, Math.PI/2, 0, 0);
+			for (var i = 0; i < latticePoints.length; i++) {
+				var dot = new cc.Sprite();
+				dot.initWithFile(window.bl.getResource('bubble_dot'));
+				dot.setPosition(latticePoints[i]);
+				this.latticeNode.addChild(dot);
+
+				dot.highlight = function(highlight) {
+					var color = highlight ? cc.c3b(229, 126, 30) : cc.c3b(255, 255, 255);
+					this.setColor(color);
+				};
+			};
+			this.addChild(this.latticeNode);
 		},
 	});
 
