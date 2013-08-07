@@ -8,6 +8,7 @@ define(['arrow'], function(Arrow) {
 			var height = 450;
 			this.boundary = cc.RectMake(-width/2, -height/2, width, height);
 
+			this.dotDistance = 50;
 			this.dots = [];
 
 			this.latticeNode;
@@ -19,15 +20,13 @@ define(['arrow'], function(Arrow) {
 			this.arrowNode;
 			this.arrow;
 			this.setupArrowNode();
-
-			this.arrow.moveForward(300, 3);
 		},
 
 		setupLatticeNode:function() {
 			this.width = 800;
 			this.height = 450;
 			this.latticeNode = new cc.Node();
-			var latticePoints = this.boundary.latticePoints(50, 50, Math.PI/2, 0, 0);
+			var latticePoints = this.boundary.latticePoints(this.dotDistance, this.dotDistance, Math.PI/2, 0, 0);
 			for (var i = 0; i < latticePoints.length; i++) {
 				var dot = new cc.Sprite();
 				dot.initWithFile(window.bl.getResource('bubble_dot'));
