@@ -202,7 +202,7 @@ define(['canvasclippingnode', 'draggable', 'scrollbar', 'constants'], function(C
 			for (var i = 0; i < this.spaces.length; i++) {
 				var space = this.spaces[i];
 				var leftPositionWorld = space.convertToWorldSpace(leftPositionRelativeToSpace);
-				var leftPosition = this.spacesNode.convertToNodeSpace(leftPositionWorld);
+				var leftPosition = this.convertToNodeSpace(leftPositionWorld);
 				if (space.instruction === null) {
 					dropIndex = i;
 					break;
@@ -253,10 +253,8 @@ define(['canvasclippingnode', 'draggable', 'scrollbar', 'constants'], function(C
 			var totalNumberOfRows = this.spaceRows.length;
 			var numberOfRowsUsed = Math.ceil(this.instructions.length/this.spacesPerRow);
 			if (numberOfRowsUsed >= totalNumberOfRows) {
-				// this.addSpaceRow(totalNumberOfRows);
 				this.changeSpaceRows(true);
 			} else if (numberOfRowsUsed <= totalNumberOfRows - 2 && numberOfRowsUsed >= 1) {
-				// this.removeLastSpaceRow();
 				this.changeSpaceRows(false);
 			};
 		},
