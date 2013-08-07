@@ -4,6 +4,9 @@ define(['arrow'], function(Arrow) {
 	var SplashNode = cc.Node.extend({
 		ctor:function() {
 			this._super();
+			var width = 800;
+			var height = 450;
+			this.boundary = cc.RectMake(-width/2, -height/2, width, height);
 
 			this.dots = [];
 
@@ -16,14 +19,15 @@ define(['arrow'], function(Arrow) {
 			this.arrowNode;
 			this.arrow;
 			this.setupArrowNode();
+
+			this.arrow.moveForward(300, 3);
 		},
 
 		setupLatticeNode:function() {
 			this.width = 800;
 			this.height = 450;
 			this.latticeNode = new cc.Node();
-			this.latticeNode.boundary = cc.RectMake(-this.width/2, -this.height/2, this.width, this.height);
-			var latticePoints = this.latticeNode.boundary.latticePoints(50, 50, Math.PI/2, 0, 0);
+			var latticePoints = this.boundary.latticePoints(50, 50, Math.PI/2, 0, 0);
 			for (var i = 0; i < latticePoints.length; i++) {
 				var dot = new cc.Sprite();
 				dot.initWithFile(window.bl.getResource('bubble_dot'));
@@ -51,6 +55,7 @@ define(['arrow'], function(Arrow) {
 			this.arrow = new Arrow();
 			this.arrow.setDrawingNode(this.drawingNode);
 			this.arrow.setPosition(this.dots[48].getPosition());
+			this.arrow.setRotation(180);
 			this.arrow.setDrawing(true);
 			this.arrowNode.addChild(this.arrow);
 

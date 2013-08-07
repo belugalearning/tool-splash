@@ -8,7 +8,7 @@ define([], function() {
 			this.drawing = false;
 
 			this.initWithFile(window.bl.getResource('arrow'));
-			this.setAnchorPoint(cc.p(0.5, 0.6));
+			this.setAnchorPoint(cc.p(0.5, 0.43));
 
 			this.drawingNode;
 		},
@@ -41,7 +41,7 @@ define([], function() {
 
 		moveForward:function(distance, duration) {
 			var rotation = this.getRotation() * 2 * Math.PI / 360;
-			var moveBy = cc.MoveBy.create(duration, cc.p(-distance * Math.cos(rotation), distance * Math.sin(rotation)));
+			var moveBy = cc.MoveBy.create(duration, cc.p(distance * Math.cos(rotation), -distance * Math.sin(rotation)));
 			this.runAction(moveBy);
 		},
 	});
