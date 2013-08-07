@@ -270,10 +270,13 @@ define(['canvasclippingnode', 'draggable', 'scrollbar', 'constants'], function(C
 			this.scrollBar.scrollToHeight(height);
 		},
 
-		dropInInstructionBox:function(instructionBox, touchLocation) {
+		dropInInstructionBoxes:function(instructionBoxes, touchLocation) {
 			var dropIndex = this.positionForDrop(touchLocation);
-			this.insertInstructionBoxInPosition(instructionBox, dropIndex);
-			this.setInstructionTouchFunctions(instructionBox);
+			for (var i = 0; i < instructionBoxes.length; i++) {
+				var instructionBox = instructionBoxes[i];
+				this.insertInstructionBoxInPosition(instructionBox, dropIndex + i);
+				this.setInstructionTouchFunctions(instructionBox);
+			};
 		},
 
 		insertInstructionBoxInPosition:function(instructionBox, positionIndex) {
@@ -311,7 +314,7 @@ define(['canvasclippingnode', 'draggable', 'scrollbar', 'constants'], function(C
                 if (self.touched(touchLocation)) {
                     var touchRelative = self.convertToNodeSpace(touchLocation);
                     this.removeFromParent();
-	                self.dropInInstructionBox(this, touchRelative);
+	                self.dropInInstructionBoxes([this], touchRelative);
                 } else {
                 	self.removeInstructions([this].concat(this.linked));
                 };

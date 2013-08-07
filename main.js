@@ -115,14 +115,13 @@ define(['exports', 'cocos2d', 'qlayer', 'toollayer', 'instructioncontainer', 'in
                     if (this.type === InstructionTypes.LOOP) {
                         var openBracket = new InstructionDraggable();
                         openBracket.initWithType(InstructionTypes.OPEN_BRACKET);
-                        self.instructionTicker.dropInInstructionBox(openBracket, touchRelative);
                         var closeBracket = new InstructionDraggable();
                         closeBracket.initWithType(InstructionTypes.CLOSE_BRACKET);
-                        self.instructionTicker.dropInInstructionBox(closeBracket, touchRelative);
+                        self.instructionTicker.dropInInstructionBoxes([openBracket, closeBracket], touchRelative);
                         openBracket.linked = [closeBracket];
                         closeBracket.linked = [openBracket];
                     } else {
-                        self.instructionTicker.dropInInstructionBox(this, touchRelative);
+                        self.instructionTicker.dropInInstructionBoxes([this], touchRelative);
                         this.linked = [];
                     };
                     button.setupDraggable();
