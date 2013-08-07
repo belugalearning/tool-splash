@@ -1,4 +1,4 @@
-define([], function() {
+define(['arrow'], function(Arrow) {
 	'use strict';
 
 	var SplashNode = cc.Node.extend({
@@ -9,14 +9,13 @@ define([], function() {
 
 			this.latticeNode;
 			this.setupLatticeNode();
-			
-			// this.drawingNode;
+
+			this.drawingNode;
+			this.setupDrawingNode();
 
 			this.arrowNode;
 			this.arrow;
 			this.setupArrowNode();
-
-
 		},
 
 		setupLatticeNode:function() {
@@ -40,12 +39,19 @@ define([], function() {
 			this.addChild(this.latticeNode);
 		},
 
+		setupDrawingNode:function() {
+			this.drawingNode = new cc.DrawNode();
+			this.addChild(this.drawingNode);
+		},
+
 		setupArrowNode:function() {
+			var self = this;
 			this.arrowNode = new cc.Node();
 
-			this.arrow = new cc.Sprite();
-			this.arrow.initWithFile(window.bl.getResource('arrow'));
+			this.arrow = new Arrow();
+			this.arrow.setDrawingNode(this.drawingNode);
 			this.arrow.setPosition(this.dots[48].getPosition());
+			this.arrow.setDrawing(true);
 			this.arrowNode.addChild(this.arrow);
 
 			this.addChild(this.arrowNode);

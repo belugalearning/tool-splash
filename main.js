@@ -7,6 +7,7 @@ require.config({
         'instructiondraggable': '../../tools/splash/instruction-draggable',
         'scrollbar': '../../tools/splash/scroll-bar',
         'splashnode': '../../tools/splash/splash-node',
+        'arrow': '../../tools/splash/arrow',
         'constants': '../../tools/splash/constants'
     }
 });
