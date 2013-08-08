@@ -1,5 +1,7 @@
-define([], function() {
+define(['constants'], function(constants) {
 	'use strict';
+
+	var TurnStyles = constants['TurnStyles'];
 
 	var Arrow = cc.Sprite.extend({
 		ctor:function() {
@@ -12,6 +14,8 @@ define([], function() {
 
 			this.actionFunctions = [];
 
+			this.unitDistance = 1;
+
 			this.drawingNode;
 		},
 
@@ -21,6 +25,10 @@ define([], function() {
 
 		setDrawing:function(drawing) {
 			this.drawing = drawing;
+		},
+
+		setUnitDistance:function(unit) {
+			this.unitDistance = unit;
 		},
 
 		setPosition:function() {
@@ -41,6 +49,7 @@ define([], function() {
 		},
 
 		move:function(speed) {
+			speed = speed || 1;
 			var self = this;
 			var index = 0;
 			var next = function() {
@@ -55,35 +64,46 @@ define([], function() {
 			next();
 		},
 
-		queueMoveInDirection:function(angle, turnDuration, distance, moveDuration) {
-			this.queueRotateTo(angle, turnDuration);
-			this.queueMoveForward(distance, moveDuration);
+		queueMoveInDirection:function(angle, distance, turnStyle) {
+			this.queueRotateTo(angle, turnStyle);
+			this.queueMoveForward(distance);
 		},
 
-		queueMoveForward:function(distance, duration) {
+		queueMoveForward:function(distance) {
 			var self = this;
 			var moveForward = function(speed) {
 				var rotation = self.getRotation() * 2 * Math.PI / 360;
+				var duration = distance/self.unitDistance;
 				var moveBy = cc.MoveBy.create(duration/speed, cc.p(distance * Math.cos(rotation), -distance * Math.sin(rotation)));
 				return moveBy;
 			}
 			this.actionFunctions.push(moveForward);
 		},
 
-		queueRotateBy:function(angle, duration) {
+		queueRotateBy:function(angle) {
 			var rotate = function(speed) {
+				var duration = Math.abs(angle)/90;
 				var rotate = cc.RotateBy.create(duration/speed, angle);
 				return rotate;
 			}
 			this.actionFunctions.push(rotate);
 		},
 
-		queueRotateTo:function(angle, duration) {
-			var rotate = function(speed) {
-				var rotate = cc.RotateTo.create(duration/speed, angle);
-				return rotate;
-			}
-			this.actionFunctions.push(rotate);
+		queueRotateTo:function(angle, turnStyle) {
+			var startRotation = this.getRotation();
+			var turnClockwise = (angle - startRotation).numberInCorrectRange(0, 360);
+			if (turnStyle === TurnStyles.CLOCKWISE) {
+				this.queueRotateBy(turnClockwise);
+			} else if (turnStyle === TurnStyles.ANTICLOCKWISE) {
+				this.queueRotateBy(turnClockwise - 360);
+			} else {
+				var turnShort = turnClockwise < 180 ? turnClockwise : turnClockwise - 360;
+				if (turnStyle === TurnStyles.SHORTEST) {
+					this.queueRotateBy(turnShort);
+				} else {
+					this.queueRotateBy(turnShort - 360);
+				};
+			} 
 		},
 
 /*		moveInDirection:function(angle, distance, rotationDuration, moveDuration) {

@@ -103,7 +103,14 @@ define([], function() {
 				},
 				
 			},
-		}
+		},
+
+		'TurnStyles': {
+			CLOCKWISE: 'clockwise',
+			ANTICLOCKWISE: 'anticlockwise',
+			SHORTEST: 'shortest',
+			LONGEST: 'longest'
+		},
 	}
 
 })
