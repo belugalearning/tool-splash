@@ -2,6 +2,7 @@ define(['constants'], function(constants) {
 	'use strict';
 
 	var TurnStyles = constants['TurnStyles'];
+	var InstructionTypes = constants['InstructionTypes'];
 
 	var Arrow = cc.Sprite.extend({
 		ctor:function() {
@@ -17,6 +18,8 @@ define(['constants'], function(constants) {
 			this.unitDistance = 1;
 
 			this.drawingNode;
+
+			this.speed = 1;
 		},
 
 		setDrawingNode:function(drawingNode) {
@@ -48,6 +51,99 @@ define(['constants'], function(constants) {
 			};
 		},
 
+
+		queueMoveInDirection:function(angle, distance, turnStyle) {
+			this.queueRotateTo(angle, turnStyle);
+			this.queueMoveForward(distance);
+		},
+
+		moveForwardRunner:function(distance) {
+			var self = this;
+			var moveForward = function() {
+				var rotation = self.getRotation() * 2 * Math.PI / 360;
+				var duration = distance/self.unitDistance;
+				var moveBy = cc.MoveBy.create(duration/self.speed, cc.p(distance * Math.cos(rotation), -distance * Math.sin(rotation)));
+				return moveBy;
+			}
+			return moveForward;
+		},
+
+		rotateByRunner:function(angle) {
+			var self = this;
+			var rotate = function() {
+				var duration = Math.abs(angle)/90;
+				var rotate = cc.RotateBy.create(duration/self.speed, angle);
+				return rotate;
+			}
+			return rotate;
+		},
+
+		rotateToRunner:function(angle, turnStyle) {
+			var startRotation = this.getRotation();
+			var turnClockwise = (angle - startRotation).numberInCorrectRange(0, 360);
+			var runner;
+			if (turnStyle === TurnStyles.CLOCKWISE) {
+				runner = this.rotateByRunner(turnClockwise);
+			} else if (turnStyle === TurnStyles.ANTICLOCKWISE) {
+				runner = this.rotateByRunner(turnClockwise - 360);
+			} else {
+				var turnShort = turnClockwise < 180 ? turnClockwise : turnClockwise - 360;
+				if (turnStyle === TurnStyles.SHORTEST) {
+					runner = this.rotateByRunner(turnShort);
+				} else {
+					runner = this.rotateByRunner(turnShort - 360);
+				};
+			}
+			return runner;
+		},
+
+		followInstructions:function(instructions) {
+			var index = 0;
+			var self = this;
+			var followNextInstruction = function() {
+				if (index < instructions.length) {
+					var instruction = instructions[index];
+					if (instruction.type === InstructionTypes.OPEN_BRACKET) {
+
+					} else {
+						index++;
+						var actions = [];			
+						if (instruction.type['turn_to_direction'] !== undefined) {
+							var turn = self.rotateToRunner(instruction.type['turn_to_direction'], TurnStyles.SHORTEST);
+							actions.push(turn);
+						} else if (instruction.type['turn_by_direction'] !== undefined) {
+							var turn = self.rotateByRunner(instruction.type['turn_by_direction']);
+							actions.push(turn);
+						};
+						if (instruction.type['move_by_distance'] !== undefined) {
+							var move = self.moveForwardRunner(instruction.type['move_by_distance'] * self.unitDistance);
+							actions.push(move);
+						};
+						actions.push(function() {
+							return cc.CallFunc.create(followNextInstruction);
+						});
+						var actionIndex = 0;
+						var next = function() {
+							if (actionIndex < actions.length) {
+								var action = actions[actionIndex].call(self);
+								actionIndex++;
+								var call = cc.CallFunc.create(next);
+								var sequence = cc.Sequence.create(action, call);
+								self.runAction(sequence);
+							};
+						};
+						next();
+					};
+				};
+			};
+			followNextInstruction();
+/*			while (index < instructions.length) {
+				var instruction = instructions[index];
+				instruction.instruction.call(this, this.unitDistance);
+				index++;
+			};
+*/		},
+
 		move:function(speed) {
 			speed = speed || 1;
 			var self = this;
@@ -64,47 +160,6 @@ define(['constants'], function(constants) {
 			next();
 		},
 
-		queueMoveInDirection:function(angle, distance, turnStyle) {
-			this.queueRotateTo(angle, turnStyle);
-			this.queueMoveForward(distance);
-		},
-
-		queueMoveForward:function(distance) {
-			var self = this;
-			var moveForward = function(speed) {
-				var rotation = self.getRotation() * 2 * Math.PI / 360;
-				var duration = distance/self.unitDistance;
-				var moveBy = cc.MoveBy.create(duration/speed, cc.p(distance * Math.cos(rotation), -distance * Math.sin(rotation)));
-				return moveBy;
-			}
-			this.actionFunctions.push(moveForward);
-		},
-
-		queueRotateBy:function(angle) {
-			var rotate = function(speed) {
-				var duration = Math.abs(angle)/90;
-				var rotate = cc.RotateBy.create(duration/speed, angle);
-				return rotate;
-			}
-			this.actionFunctions.push(rotate);
-		},
-
-		queueRotateTo:function(angle, turnStyle) {
-			var startRotation = this.getRotation();
-			var turnClockwise = (angle - startRotation).numberInCorrectRange(0, 360);
-			if (turnStyle === TurnStyles.CLOCKWISE) {
-				this.queueRotateBy(turnClockwise);
-			} else if (turnStyle === TurnStyles.ANTICLOCKWISE) {
-				this.queueRotateBy(turnClockwise - 360);
-			} else {
-				var turnShort = turnClockwise < 180 ? turnClockwise : turnClockwise - 360;
-				if (turnStyle === TurnStyles.SHORTEST) {
-					this.queueRotateBy(turnShort);
-				} else {
-					this.queueRotateBy(turnShort - 360);
-				};
-			} 
-		},
 
 /*		moveInDirection:function(angle, distance, rotationDuration, moveDuration) {
 			var rotate = cc.RotateTo.create(rotationDuration, angle);

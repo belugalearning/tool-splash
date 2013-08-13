@@ -12,7 +12,7 @@ require.config({
     }
 });
 
-define(['exports', 'cocos2d', 'qlayer', 'toollayer', 'instructioncontainer', 'instructiondragbutton', 'instructiondraggable', 'instructionticker', 'splashnode', 'constants' ], function (exports, cc, QLayer, ToolLayer, InstructionContainer, InstructionDragButton, InstructionDraggable, InstructionTicker, SplashNode, constants) {
+define(['exports', 'cocos2d', 'qlayer', 'toollayer', 'instructioncontainer', 'instructiondragbutton', 'instructiondraggable', 'instructionticker', 'splashnode', 'blbutton', 'constants' ], function (exports, cc, QLayer, ToolLayer, InstructionContainer, InstructionDragButton, InstructionDraggable, InstructionTicker, SplashNode, BLButton, constants) {
     'use strict';
 
     var InstructionTypes = constants["InstructionTypes"];
@@ -70,6 +70,20 @@ define(['exports', 'cocos2d', 'qlayer', 'toollayer', 'instructioncontainer', 'in
             var topOfTicker = this.instructionTicker.getBoundingBox().origin.y + this.instructionTicker.getBoundingBox().size.height;
             this.splashNode.setPosition(this.getContentSize().width/2, (topOfTicker + this.getContentSize().height)/2);
             this.addChild(this.splashNode);
+            this.arrow = this.splashNode.arrow;
+
+            this.playButton = new BLButton();
+            this.playButton.initWithFile(window.bl.getResource('play_button'));
+            this.playButton.setPosition(this._windowSize.width - this.playButton.getContentSize().width/2, 700);
+            this.addChild(this.playButton);
+
+            var self = this;
+            this.playButton.onTouchUp(function() {
+                if (self.instructionTicker.valid) {
+                    var instructions = self.instructionTicker.instructions;
+                    self.arrow.followInstructions(instructions);
+                };
+            });
         },
 
         setupInstructionButtons:function() {
