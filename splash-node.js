@@ -58,8 +58,15 @@ define(['arrow'], function(Arrow) {
 			this.arrow.setDrawing(true);
 			this.arrow.setUnitDistance(this.dotDistance);
 			this.arrowNode.addChild(this.arrow);
-
+			this.arrow.setBoundary(this.boundary);
 			this.addChild(this.arrowNode);
+		},
+
+		reset:function() {
+			this.drawingNode.removeFromParent();
+			this.setupDrawingNode();
+			this.arrowNode.removeFromParent();
+			this.setupArrowNode();
 		},
 	});
 

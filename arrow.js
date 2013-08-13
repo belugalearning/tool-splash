@@ -20,6 +20,13 @@ define(['constants'], function(constants) {
 			this.drawingNode;
 
 			this.speed = 1;
+
+			this.boundary;
+			this.ignoreBoundary;
+
+			this.breakMovement = false;
+
+			this.following = false;
 		},
 
 		setDrawingNode:function(drawingNode) {
@@ -44,18 +51,47 @@ define(['constants'], function(constants) {
 				point = arguments[0];
 			};
 			var previousPoint = this.getPosition();
-			this._super(point);
-			if (this.drawing) {
-				this.drawingNode.drawDot(previousPoint, radius-1, color);
-				this.drawingNode.drawSegment(previousPoint, point, radius, color);
+			if (this.boundary === undefined || this.ignoreBoundary === true || cc.rectContainsPoint(this.boundary, point)) {
+				this._super(point);
+				if (this.drawing) {
+					this.drawingNode.drawDot(previousPoint, radius-1, color);
+					this.drawingNode.drawSegment(previousPoint, point, radius, color);
+				};
+			} else {
+				this.breakMovement = true;
+				this.freakOut();
 			};
+		},
+
+		setBoundary:function(boundary) {
+			this.boundary = boundary;
+		},
+
+		freakOut:function() {
+			this.ignoreBoundary = true;
+			this.setColor(cc.c3b(255, 0, 0));
+			var shakes = [];
+			var homePosition = this.getPosition();
+			var radius = 7;
+			for (var i = 0; i < 20; i++) {
+				var angle = i * 0.618 * Math.PI * 2;
+				var offset = cc.p(Math.random() * 2 + radius * Math.cos(angle), Math.random() * 2 + radius * Math.sin(angle));
+				var shake = cc.MoveTo.create(0.05, cc.pAdd(homePosition, offset));
+				shakes.push(shake);
+			};
+			var returnAction = cc.MoveTo.create(0.05, homePosition);
+			shakes.push(returnAction);
+			var sequence = cc.Sequence.create(shakes);
+			this.drawing = false;
+			this.runAction(sequence);
 		},
 
 		followInstructions:function(instructions) {
 			var index = 0;
 			var self = this;
+			this.following = true;
 			var followNextInstruction = function() {
-				if (index < instructions.length) {
+				if (index < instructions.length && !self.breakMovement) {
 					var instruction = instructions[index];
 					if (instruction.type === InstructionTypes.OPEN_BRACKET) {
 						instruction.loopsRemaining = 2;
