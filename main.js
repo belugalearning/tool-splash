@@ -40,6 +40,8 @@ define(['exports', 'cocos2d', 'qlayer', 'toollayer', 'instructioncontainer', 'in
 
             this.setQuestion();
 
+            this.following = true;
+
             return this;
         },
 
@@ -64,13 +66,13 @@ define(['exports', 'cocos2d', 'qlayer', 'toollayer', 'instructioncontainer', 'in
 
             this.instructionTicker = new InstructionTicker();
             this.instructionTicker.setPosition(this._windowSize.width/2, 175);
+            this.instructionTicker.setZOrder(2);
             this.addChild(this.instructionTicker);
 
             this.splashNode = new SplashNode();
             var topOfTicker = this.instructionTicker.getBoundingBox().origin.y + this.instructionTicker.getBoundingBox().size.height;
             this.splashNode.setPosition(this.getContentSize().width/2, (topOfTicker + this.getContentSize().height)/2);
             this.addChild(this.splashNode);
-            this.arrow = this.splashNode.arrow;
 
             this.playButton = new BLButton();
             this.playButton.initWithFile(window.bl.getResource('play_button'));
@@ -80,9 +82,50 @@ define(['exports', 'cocos2d', 'qlayer', 'toollayer', 'instructioncontainer', 'in
             var self = this;
             this.playButton.onTouchUp(function() {
                 if (self.instructionTicker.valid) {
+                    self.splashNode.reset();
+                    var arrow = self.splashNode.arrow;
+                    arrow.speed = speedLabel.speed;
+                    self.instructionTicker.unhighlightAll();
                     var instructions = self.instructionTicker.instructions;
-                    self.arrow.followInstructions(instructions);
+                    arrow.followInstructions(instructions);
+                    // arrow.freakOut();
                 };
+            });
+
+            var speedLabel = new cc.LabelTTF.create("", "mikadoBold", 20);
+            speedLabel.setPosition(970, 580);
+            this.addChild(speedLabel);
+            speedLabel.speed = 1;
+            speedLabel.setString(speedLabel.speed);
+
+            this.speedUp = new BLButton();
+            this.speedUp.initWithFile(window.bl.getResource('up_button'));
+            this.speedUp.setPosition(970, 620);
+            this.addChild(this.speedUp);
+            this.speedUp.onTouchUp(function() {
+                if (speedLabel.speed < 10) {
+                    speedLabel.speed++;
+                    speedLabel.setString(speedLabel.speed);
+                };
+            });
+
+            this.speedDown = new BLButton();
+            this.speedDown.initWithFile(window.bl.getResource('down_button'));
+            this.speedDown.setPosition(970, 520);
+            this.addChild(this.speedDown);
+            this.speedDown.onTouchUp(function() {
+                if (speedLabel.speed > 1) {
+                    speedLabel.speed--;
+                    speedLabel.setString(speedLabel.speed);
+                };
+            });
+
+            this.stopButton = new BLButton();
+            this.stopButton.initWithFile(window.bl.getResource('free_form_closebutton'));
+            this.stopButton.setPosition(970, 450);
+            this.addChild(this.stopButton);
+            this.stopButton.onTouchUp(function() {
+                self.splashNode.arrow.breakMovement = true;
             });
         },
 
@@ -156,7 +199,18 @@ define(['exports', 'cocos2d', 'qlayer', 'toollayer', 'instructioncontainer', 'in
                     highlighting = false;
                 };
             });
-        }
+        },
+
+        update:function() {
+            this._super();
+            if (this.following !== this.splashNode.arrow.following) {
+                this.following = this.splashNode.arrow.following;
+                this.playButton.setGreyedOut(this.following);
+                this.speedUp.setGreyedOut(this.following);
+                this.speedDown.setGreyedOut(this.following);
+                this.stopButton.setGreyedOut(!this.following);
+            };
+        },
     });
 
     ToolLayer.create = function () {

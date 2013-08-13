@@ -149,6 +149,8 @@ define(['constants'], function(constants) {
 						};
 						next();
 					};
+				} else {
+					self.following = false;
 				};
 			};
 			followNextInstruction();
