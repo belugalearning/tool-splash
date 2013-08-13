@@ -115,20 +115,22 @@ define(['constants'], function(constants) {
 						instruction.highlight(true);
 						index++;
 						var actions = [];			
-						if (instruction.type['turn_to_direction'] !== undefined) {
-							var turn = self.rotateToRunner(instruction.type['turn_to_direction'], TurnStyles.SHORTEST);
+						if (instruction.parameters['turn_to_direction'] !== undefined) {
+							var turn = self.rotateToRunner(instruction.parameters['turn_to_direction'], TurnStyles.SHORTEST);
 							actions.push(turn);
-						} else if (instruction.type['turn_by_direction'] !== undefined) {
-							var turn = self.rotateByRunner(instruction.type['turn_by_direction']);
+						} else if (instruction.parameters['turn_by_direction'] !== undefined) {
+							var turn = self.rotateByRunner(instruction.parameters['turn_by_direction']);
 							actions.push(turn);
 						};
-						if (instruction.type['move_by_distance'] !== undefined) {
-							var move = self.moveForwardRunner(instruction.type['move_by_distance'] * self.unitDistance);
+						if (instruction.parameters['move_by_distance'] !== undefined) {
+							var move = self.moveForwardRunner(instruction.parameters['move_by_distance'] * self.unitDistance);
 							actions.push(move);
 						};
 						actions.push(function() {
 							var unhighlight = function() {
-								instruction.highlight(false);
+								if (!self.breakMovement) {
+									instruction.highlight(false);
+								};
 							}
 							return cc.CallFunc.create(unhighlight);
 						})

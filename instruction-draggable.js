@@ -14,7 +14,7 @@ define(['draggable', 'constants'], function(Draggable, constants) {
 		initWithType:function(type) {
 			this.initWithFile(window.bl.getResource(window.bl.getResource(type['filename'])));
 			this.type = type;
-			this.instruction = type['instruction'];
+			this.parameters = type['instruction_parameters'];
 			this.setZoomOnTouchDown(false);
 			if (type["label"]) {
 				this.label = new cc.LabelTTF.create(type["label"], "mikadoBold", 20);
