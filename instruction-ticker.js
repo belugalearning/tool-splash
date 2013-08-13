@@ -35,6 +35,7 @@ define(['canvasclippingnode', 'draggable', 'scrollbar', 'constants'], function(C
 			// this.addChild(this.spacesNode);
 
 			this.instructions = [];
+			this.valid;
 
 			this.spaces;
 			this.spaceRows = [];
@@ -259,6 +260,42 @@ define(['canvasclippingnode', 'draggable', 'scrollbar', 'constants'], function(C
 			};
 		},
 
+		linkBrackets:function() {
+			var valid = true;
+			var stack = [];
+			var pairs = [];
+			for (var i = 0; i < this.instructions.length; i++) {
+				var instruction = this.instructions[i];
+				if (instruction.type === InstructionTypes.OPEN_BRACKET) {
+					stack.push(instruction);
+				} else if (instruction.type === InstructionTypes.CLOSE_BRACKET) {
+					if (stack.length === 0) {
+						valid = false;
+						break;
+					} else {
+						var open = stack.pop();
+						pairs.push([open, instruction]);
+					};
+				};
+			};
+			if (stack.length !== 0) {
+				valid = false;
+			};
+			if (valid) {
+				for (var i = 0; i < pairs.length; i++) {
+					var pair = pairs[i];
+					pair[0].linked = [pair[1]];
+					pair[1].linked = [pair[0]];
+
+					pair[0].setColor(cc.c3b(255 - i * 50, 255, 255));
+					pair[1].setColor(cc.c3b(255 - i * 50, 255, 255));
+				};
+			} else {
+				console.log("Invalid brackets!");
+			};
+			this.valid = valid;
+		},
+
 		changeSpaceRows:function(increase) {
 			var height = this.scrollBar.getNodeHeight();
 			if (increase) {
@@ -277,11 +314,12 @@ define(['canvasclippingnode', 'draggable', 'scrollbar', 'constants'], function(C
 				this.insertInstructionBoxInPosition(instructionBox, dropIndex + i);
 				this.setInstructionTouchFunctions(instructionBox);
 			};
+			this.positionInstructions();
+			this.linkBrackets();
 		},
 
 		insertInstructionBoxInPosition:function(instructionBox, positionIndex) {
 			this.instructions.splice(positionIndex, 0, instructionBox);
-			this.positionInstructions();
 		},
 
 		setInstructionTouchFunctions:function(instructionBox) {
