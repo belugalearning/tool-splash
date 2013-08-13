@@ -51,11 +51,48 @@ define(['constants'], function(constants) {
 			};
 		},
 
+		followInstructions:function(instructions) {
+			var index = 0;
+			var self = this;
+			var followNextInstruction = function() {
+				if (index < instructions.length) {
+					var instruction = instructions[index];
+					if (instruction.type === InstructionTypes.OPEN_BRACKET) {
 
-		queueMoveInDirection:function(angle, distance, turnStyle) {
-			this.queueRotateTo(angle, turnStyle);
-			this.queueMoveForward(distance);
+					} else {
+						index++;
+						var actions = [];			
+						if (instruction.type['turn_to_direction'] !== undefined) {
+							var turn = self.rotateToRunner(instruction.type['turn_to_direction'], TurnStyles.SHORTEST);
+							actions.push(turn);
+						} else if (instruction.type['turn_by_direction'] !== undefined) {
+							var turn = self.rotateByRunner(instruction.type['turn_by_direction']);
+							actions.push(turn);
+						};
+						if (instruction.type['move_by_distance'] !== undefined) {
+							var move = self.moveForwardRunner(instruction.type['move_by_distance'] * self.unitDistance);
+							actions.push(move);
+						};
+						actions.push(function() {
+							return cc.CallFunc.create(followNextInstruction);
+						});
+						var actionIndex = 0;
+						var next = function() {
+							if (actionIndex < actions.length) {
+								var action = actions[actionIndex].call(self);
+								actionIndex++;
+								var call = cc.CallFunc.create(next);
+								var sequence = cc.Sequence.create(action, call);
+								self.runAction(sequence);
+							};
+						};
+						next();
+					};
+				};
+			};
+			followNextInstruction();
 		},
+
 
 		moveForwardRunner:function(distance) {
 			var self = this;
@@ -97,76 +134,7 @@ define(['constants'], function(constants) {
 			return runner;
 		},
 
-		followInstructions:function(instructions) {
-			var index = 0;
-			var self = this;
-			var followNextInstruction = function() {
-				if (index < instructions.length) {
-					var instruction = instructions[index];
-					if (instruction.type === InstructionTypes.OPEN_BRACKET) {
-
-					} else {
-						index++;
-						var actions = [];			
-						if (instruction.type['turn_to_direction'] !== undefined) {
-							var turn = self.rotateToRunner(instruction.type['turn_to_direction'], TurnStyles.SHORTEST);
-							actions.push(turn);
-						} else if (instruction.type['turn_by_direction'] !== undefined) {
-							var turn = self.rotateByRunner(instruction.type['turn_by_direction']);
-							actions.push(turn);
-						};
-						if (instruction.type['move_by_distance'] !== undefined) {
-							var move = self.moveForwardRunner(instruction.type['move_by_distance'] * self.unitDistance);
-							actions.push(move);
-						};
-						actions.push(function() {
-							return cc.CallFunc.create(followNextInstruction);
-						});
-						var actionIndex = 0;
-						var next = function() {
-							if (actionIndex < actions.length) {
-								var action = actions[actionIndex].call(self);
-								actionIndex++;
-								var call = cc.CallFunc.create(next);
-								var sequence = cc.Sequence.create(action, call);
-								self.runAction(sequence);
-							};
-						};
-						next();
-					};
-				};
-			};
-			followNextInstruction();
-/*			while (index < instructions.length) {
-				var instruction = instructions[index];
-				instruction.instruction.call(this, this.unitDistance);
-				index++;
-			};
-*/		},
-
-		move:function(speed) {
-			speed = speed || 1;
-			var self = this;
-			var index = 0;
-			var next = function() {
-				if (index < self.actionFunctions.length) {
-					var action = self.actionFunctions[index].call("placeholder", speed);
-					index++;
-					var call = cc.CallFunc.create(next);
-					var sequence = cc.Sequence.create(action, call);
-					self.runAction(sequence);
-				};
-			};
-			next();
-		},
-
-
-/*		moveInDirection:function(angle, distance, rotationDuration, moveDuration) {
-			var rotate = cc.RotateTo.create(rotationDuration, angle);
-			this.runAction(rotate);
-			this.moveForward(distance, moveDuration);
-		},
-*/	});
+	});
 
 	return Arrow;
 
