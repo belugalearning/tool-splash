@@ -325,6 +325,7 @@ define(['canvasclippingnode', 'draggable', 'scrollbar', 'constants'], function(C
 			var highlighting = false;
 
 			instructionBox.onTouchDown(function(touchLocation) {
+				this.highlight(false);
 				self.removeInstructions([this]);
 				self.addChild(this);
 				var position = self.convertToNodeSpace(touchLocation);
@@ -367,6 +368,12 @@ define(['canvasclippingnode', 'draggable', 'scrollbar', 'constants'], function(C
 				instruction.removeFromParent();
 			})
 			this.positionInstructions();
+		},
+
+		unhighlightAll:function() {
+			for (var i = 0; i < this.instructions.length; i++) {
+				this.instructions[i].highlight(false);
+			};
 		},
 
 	})
