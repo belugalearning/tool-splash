@@ -60,6 +60,8 @@ define(['constants'], function(constants) {
 					if (instruction.type === InstructionTypes.OPEN_BRACKET) {
 						instruction.loopsRemaining = 2;
 						index++;
+						instruction.highlight(true);
+						instruction.linked[0].highlight(true);
 						followNextInstruction();
 					} else if (instruction.type === InstructionTypes.CLOSE_BRACKET) {
 						var openBracket = instruction.linked[0];
@@ -69,9 +71,12 @@ define(['constants'], function(constants) {
 							index = openIndex + 1;
 						} else {
 							index++;
+							instruction.highlight(false);
+							openBracket.highlight(false);
 						};
 						followNextInstruction();
 					} else {
+						instruction.highlight(true);
 						index++;
 						var actions = [];			
 						if (instruction.type['turn_to_direction'] !== undefined) {
@@ -85,6 +90,12 @@ define(['constants'], function(constants) {
 							var move = self.moveForwardRunner(instruction.type['move_by_distance'] * self.unitDistance);
 							actions.push(move);
 						};
+						actions.push(function() {
+							var unhighlight = function() {
+								instruction.highlight(false);
+							}
+							return cc.CallFunc.create(unhighlight);
+						})
 						actions.push(function() {
 							return cc.CallFunc.create(followNextInstruction);
 						});

@@ -8,6 +8,7 @@ define(['draggable', 'constants'], function(Draggable, constants) {
 			this._super();
 			this.instruction;
 			this.type;
+			this.highlighter;
 		},
 
 		initWithType:function(type) {
@@ -17,9 +18,17 @@ define(['draggable', 'constants'], function(Draggable, constants) {
 			this.setZoomOnTouchDown(false);
 			if (type["label"]) {
 				this.label = new cc.LabelTTF.create(type["label"], "mikadoBold", 20);
-				// this.label.setPosition(this.getAnchorPointInPoints());
 				this.addChild(this.label);
 			};
+			this.highlighter = new cc.Sprite();
+			this.highlighter.initWithFile(window.bl.getResource('blank_grey'));
+			this.addChild(this.highlighter);
+			this.highlighter.setOpacity(128);
+			this.highlighter.setVisible(false);
+		},
+
+		highlight:function(highlight) {
+			this.highlighter.setVisible(highlight);
 		},
 	})
 
