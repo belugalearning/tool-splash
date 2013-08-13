@@ -286,9 +286,6 @@ define(['canvasclippingnode', 'draggable', 'scrollbar', 'constants'], function(C
 					var pair = pairs[i];
 					pair[0].linked = [pair[1]];
 					pair[1].linked = [pair[0]];
-
-					pair[0].setColor(cc.c3b(255 - i * 50, 255, 255));
-					pair[1].setColor(cc.c3b(255 - i * 50, 255, 255));
 				};
 			} else {
 				console.log("Invalid brackets!");

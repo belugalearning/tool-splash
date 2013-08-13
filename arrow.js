@@ -58,7 +58,19 @@ define(['constants'], function(constants) {
 				if (index < instructions.length) {
 					var instruction = instructions[index];
 					if (instruction.type === InstructionTypes.OPEN_BRACKET) {
-
+						instruction.loopsRemaining = 2;
+						index++;
+						followNextInstruction();
+					} else if (instruction.type === InstructionTypes.CLOSE_BRACKET) {
+						var openBracket = instruction.linked[0];
+						var openIndex = instructions.indexOf(openBracket);
+						openBracket.loopsRemaining--;
+						if (openBracket.loopsRemaining > 0) {
+							index = openIndex + 1;
+						} else {
+							index++;
+						};
+						followNextInstruction();
 					} else {
 						index++;
 						var actions = [];			
