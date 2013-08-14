@@ -11,11 +11,10 @@ define(['instructiondragbutton', 'constants'], function(InstructionDragButton, c
 
 			this.buttons = [];
 
-			this._container;
-
 			var self = this;
 
-			this.moving = false;
+			this.scrollNode = new cc.Node();
+			this.addChild(this.scrollNode);
             
             var defaultButtonZOrder = 1;
 	        _.each(InstructionTypes, function(type) {
@@ -25,7 +24,7 @@ define(['instructiondragbutton', 'constants'], function(InstructionDragButton, c
                     var positionInContainer = self.getPositionForInstruction(type);
                     instructionButton.setPosition(positionInContainer);
                     instructionButton.setZOrder(defaultButtonZOrder);
-                    self.addChild(instructionButton);
+                    self.scrollNode.addChild(instructionButton);
                     self.buttons.push(instructionButton);
                 };
             })
