@@ -405,6 +405,19 @@ define(['canvasclippingnode', 'draggable', 'scrollbar', 'blbutton', 'controllaye
 			this.controlLayer.setPosition(position);
 			this.controlLayer.setActive(true);
 		},
+
+		showPlayingDisplay:function(playing) {
+			for (var i = 0; i < this.instructions.length; i++) {
+				var instruction = this.instructions[i];
+				if (instruction.type === InstructionTypes.OPEN_BRACKET) {
+					instruction.numberOfLoopsLabel.setVisible(!playing);
+					instruction.loopCounter.setVisible(playing);
+					if (playing) {
+						instruction.totalLoopsLabel.setString(instruction.parameters['loop_times']);
+					};
+				};
+			};
+		},
 	})
 
 	return InstructionTicker;

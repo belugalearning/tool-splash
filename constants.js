@@ -132,6 +132,21 @@ define([], function() {
 					this.numberOfLoopsLabel.setPosition(-10, 3);
 					this.addChild(this.numberOfLoopsLabel);
 					this.setAdjustableLabel(this.numberOfLoopsLabel);
+
+					this.loopCounter = new cc.Node();
+					this.loopsSoFarLabel = cc.LabelTTF.create("0", "mikadoBold", 15);
+					this.loopsSoFarLabel.setPosition(0, 15);
+					this.loopCounter.addChild(this.loopsSoFarLabel);
+					var ofLabel = cc.LabelTTF.create("of", "mikadoBold", 10);
+					ofLabel.setPosition(0, 3);
+					this.loopCounter.addChild(ofLabel);
+					this.totalLoopsLabel = cc.LabelTTF.create("0", "mikadoBold", 15);
+					this.totalLoopsLabel.setPosition(0, -10);
+					this.loopCounter.addChild(this.totalLoopsLabel);
+
+					this.loopCounter.setPosition(-10, 0);
+					this.addChild(this.loopCounter);
+					this.loopCounter.setVisible(false);
 				},
 				adjustable: true,
 				adjustable_parameter: "loop_times",

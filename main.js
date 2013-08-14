@@ -86,7 +86,6 @@ define(['exports', 'cocos2d', 'qlayer', 'toollayer', 'instructioncontainer', 'in
                     self.splashNode.reset();
                     var arrow = self.splashNode.arrow;
                     arrow.speed = speedLabel.speed;
-                    self.instructionTicker.unhighlightAll();
                     var instructions = self.instructionTicker.instructions;
                     arrow.followInstructions(instructions);
                     // arrow.freakOut();
@@ -210,6 +209,10 @@ define(['exports', 'cocos2d', 'qlayer', 'toollayer', 'instructioncontainer', 'in
                 this.speedUp.setGreyedOut(this.following);
                 this.speedDown.setGreyedOut(this.following);
                 this.stopButton.setGreyedOut(!this.following);
+                this.instructionTicker.showPlayingDisplay(this.following);
+                if (!this.following) {
+                    this.instructionTicker.unhighlightAll();
+                };
             };
         },
     });

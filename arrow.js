@@ -98,7 +98,8 @@ define(['constants'], function(constants) {
 				if (index < instructions.length && !self.breakMovement) {
 					var instruction = instructions[index];
 					if (instruction.type === InstructionTypes.OPEN_BRACKET) {
-						instruction.loopsRemaining = 2;
+						instruction.loopsRemaining = instruction.parameters['loop_times'];
+						instruction.loopsSoFarLabel.setString("1");
 						index++;
 						instruction.highlight(true);
 						instruction.linked[0].highlight(true);
@@ -109,10 +110,13 @@ define(['constants'], function(constants) {
 						openBracket.loopsRemaining--;
 						if (openBracket.loopsRemaining > 0) {
 							index = openIndex + 1;
+							var loopNumber = openBracket.parameters['loop_times'] - openBracket.loopsRemaining + 1;
+							openBracket.loopsSoFarLabel.setString(loopNumber);
 						} else {
 							index++;
 							instruction.highlight(false);
 							openBracket.highlight(false);
+							openBracket.loopsSoFarLabel.setString("0");
 						};
 						followNextInstruction();
 					} else {
