@@ -53,7 +53,7 @@ define(['arrow'], function(Arrow) {
 
 			this.arrow = new Arrow();
 			this.arrow.setDrawingNode(this.drawingNode);
-			this.arrow.setPosition(this.dots[48].getPosition());
+			this.arrow.setPosition(this.dots[60].getPosition());
 			this.arrow.setRotation(180);
 			this.arrow.setDrawing(true);
 			this.arrow.setUnitDistance(this.dotDistance);
