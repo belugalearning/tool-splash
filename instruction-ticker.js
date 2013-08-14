@@ -311,10 +311,15 @@ define(['canvasclippingnode', 'draggable', 'scrollbar', 'blbutton', 'controllaye
 
 		dropInInstructionBoxes:function(instructionBoxes, touchLocation) {
 			var dropIndex = this.positionForDrop(touchLocation);
+			var controlsVisible = false;
 			for (var i = 0; i < instructionBoxes.length; i++) {
 				var instructionBox = instructionBoxes[i];
 				this.insertInstructionBoxInPosition(instructionBox, dropIndex + i);
 				this.setInstructionTouchFunctions(instructionBox);
+				if (instructionBox.type['adjustable'] && !controlsVisible) {
+					this.showControlForInstruction(instructionBox);
+					controlsVisible = true;
+				};
 			};
 			this.positionInstructions();
 			this.linkBrackets();
@@ -368,9 +373,6 @@ define(['canvasclippingnode', 'draggable', 'scrollbar', 'blbutton', 'controllaye
             instructionBox.onMoveEnded(function(touchLocation) {
             	if (!dragged) {
             		this.returnToLastPosition();
-            		if (this.type['adjustable']) {
-	            		self.showControlForInstruction(this);
-            		};
             	} else {
 	                if (self.touched(touchLocation)) {
 	                    var touchRelative = self.convertToNodeSpace(touchLocation);
@@ -384,6 +386,9 @@ define(['canvasclippingnode', 'draggable', 'scrollbar', 'blbutton', 'controllaye
 	                    highlighting = false;
 	                };
             	};
+        		if (this.type['adjustable']) {
+            		self.showControlForInstruction(this);
+        		};
             	dragged = false;
             });
 		},
