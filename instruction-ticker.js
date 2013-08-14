@@ -1,4 +1,4 @@
-define(['canvasclippingnode', 'draggable', 'scrollbar', 'constants'], function(CanvasClippingNode, Draggable, ScrollBar, constants) {
+define(['canvasclippingnode', 'draggable', 'scrollbar', 'blbutton', 'controllayer', 'constants'], function(CanvasClippingNode, Draggable, ScrollBar, BLButton, ControlLayer, constants) {
 	'use strict';
 
 	var InstructionTypes = constants["InstructionTypes"];
@@ -25,7 +25,6 @@ define(['canvasclippingnode', 'draggable', 'scrollbar', 'constants'], function(C
 			this.spaceHeight = null;
 			this.spaceWidth = null;
 
-
 			this.spacesNode = new cc.Node();
 			var spacesNode = this.spacesNode;
 			spacesNode.height = function() {
@@ -46,6 +45,12 @@ define(['canvasclippingnode', 'draggable', 'scrollbar', 'constants'], function(C
 			this.highlight = new cc.Sprite();
 			this.highlight.initWithFile(window.bl.getResource('single_white_pixel'));
 			this.highlight.setOpacity(128);
+
+			this.controlLayer = new ControlLayer();
+			this.controlLayer.setTouchPriority(-200);
+			this.addChild(this.controlLayer);
+
+
 		},
 
 		setupScrollBar:function() {
@@ -324,40 +329,56 @@ define(['canvasclippingnode', 'draggable', 'scrollbar', 'constants'], function(C
 
 			var highlighting = false;
 
+			var dragged = false;
+
 			instructionBox.onTouchDown(function(touchLocation) {
-				this.highlight(false);
-				self.removeInstructions([this]);
-				self.addChild(this);
-				var position = self.convertToNodeSpace(touchLocation);
-				this.setPosition(position);
 			});
 
 
             instructionBox.onMoved(function(touchLocation) {
-                if (self.touched(touchLocation)) {
-                    var touchRelative = self.convertToNodeSpace(touchLocation);
-                    self.highlightHovered(touchRelative);
-                    highlighting = true;
-                } else {
-                    if (highlighting) {
-                        self.clearHighlight();
-                        highlighting = false;
-                    };
-                };
+            	if (!dragged) {
+            		if (this.distanceMoved() > 10) {
+            			dragged = true;
+						this.highlight(false);
+						self.removeInstructions([this]);
+						self.addChild(this);
+						var position = self.convertToNodeSpace(touchLocation);
+						this.setPosition(position);
+            		};
+            	} else {
+	                if (self.touched(touchLocation)) {
+	                    var touchRelative = self.convertToNodeSpace(touchLocation);
+	                    self.highlightHovered(touchRelative);
+	                    highlighting = true;
+	                } else {
+	                    if (highlighting) {
+	                        self.clearHighlight();
+	                        highlighting = false;
+	                    };
+	                };
+            	};
             });
 
             instructionBox.onMoveEnded(function(touchLocation) {
-                if (self.touched(touchLocation)) {
-                    var touchRelative = self.convertToNodeSpace(touchLocation);
-                    this.removeFromParent();
-	                self.dropInInstructionBoxes([this], touchRelative);
-                } else {
-                	self.removeInstructions([this].concat(this.linked));
-                };
-                if (highlighting) {
-                    self.clearHighlight();
-                    highlighting = false;
-                };
+            	if (!dragged) {
+            		this.returnToLastPosition();
+            		if (this.type['adjustable']) {
+	            		self.showControlForInstruction(this);
+            		};
+            	} else {
+	                if (self.touched(touchLocation)) {
+	                    var touchRelative = self.convertToNodeSpace(touchLocation);
+	                    this.removeFromParent();
+		                self.dropInInstructionBoxes([this], touchRelative);
+	                } else {
+	                	self.removeInstructions([this].concat(this.linked));
+	                };
+	                if (highlighting) {
+	                    self.clearHighlight();
+	                    highlighting = false;
+	                };
+            	};
+            	dragged = false;
             });
 		},
 
@@ -376,6 +397,14 @@ define(['canvasclippingnode', 'draggable', 'scrollbar', 'constants'], function(C
 			};
 		},
 
+		showControlForInstruction:function(instruction) {
+			var index = this.instructions.indexOf(instruction);
+			this.controlLayer.target = instruction;
+			var positionInWorld = this.spaces[index].getParent().convertToWorldSpace(this.spaces[index].getPosition());
+			var position = this.convertToNodeSpace(positionInWorld);
+			this.controlLayer.setPosition(position);
+			this.controlLayer.setActive(true);
+		},
 	})
 
 	return InstructionTicker;

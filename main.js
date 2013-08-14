@@ -8,6 +8,7 @@ require.config({
         'scrollbar': '../../tools/splash/scroll-bar',
         'splashnode': '../../tools/splash/splash-node',
         'arrow': '../../tools/splash/arrow',
+        'controllayer': '../../tools/splash/control-layer',
         'constants': '../../tools/splash/constants'
     }
 });
@@ -192,7 +193,7 @@ define(['exports', 'cocos2d', 'qlayer', 'toollayer', 'instructioncontainer', 'in
                     self.setInstructionTouchFunctions(button);
                 } else {
                     this.setVisible(false);
-                    this.returnToHomePosition();
+                    this.returnToLastPosition();
                 };
                 if (highlighting) {
                     self.instructionTicker.clearHighlight();

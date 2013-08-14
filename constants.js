@@ -12,6 +12,7 @@ define([], function() {
 					turn_to_direction:270,
 					move_by_distance:1,
 				},
+				adjustable: false,
 			},
 
 			DOWN_ARROW: {
@@ -22,6 +23,7 @@ define([], function() {
 					turn_to_direction:90,
 					move_by_distance:1,
 				},
+				adjustable: false,
 			},
 
 			LEFT_ARROW: {
@@ -31,7 +33,8 @@ define([], function() {
 				instruction_parameters: {
 					turn_to_direction:180,
 					move_by_distance:1,
-				}
+				},
+				adjustable: false,
 			},
 
 			RIGHT_ARROW: {
@@ -41,7 +44,8 @@ define([], function() {
 				instruction_parameters: {
 					turn_to_direction:0,
 					move_by_distance:1,
-				}
+				},
+				adjustable: false,
 			},
 
 			DEGREES_30: {
@@ -51,7 +55,8 @@ define([], function() {
 				instruction_parameters: {
 					turn_by_direction:30,
 					move_by_distance:0,
-				}
+				},
+				adjustable: false,
 			},
 
 			DEGREES_45: {
@@ -61,7 +66,8 @@ define([], function() {
 				instruction_parameters: {
 					turn_by_direction:45,
 					move_by_distance:0,
-				}
+				},
+				adjustable: false,
 			},
 
 			DEGREES_60: {
@@ -71,7 +77,8 @@ define([], function() {
 				instruction_parameters: {
 					turn_by_direction:60,
 					move_by_distance:0,
-				}
+				},
+				adjustable: false,
 			},
 
 			DEGREES_90: {
@@ -81,7 +88,8 @@ define([], function() {
 				instruction_parameters: {
 					turn_by_direction:90,
 					move_by_distance:0,
-				}
+				},
+				adjustable: false,
 			},
 
 			STEP: {
@@ -90,7 +98,8 @@ define([], function() {
 				container_position: 8,
 				instruction_parameters: {
 					move_by_distance: 1,
-				}
+				},
+				adjustable: true,
 			},
 
 			LOOP: {
@@ -105,13 +114,26 @@ define([], function() {
 				instruction_parameters: {
 					loop_times: 2,
 				},
-				label: "(",
+				setup:function() {
+					var bracketLabel = cc.LabelTTF.create("(", "mikadoBold", 20);
+					bracketLabel.setPosition(10, 3);
+					this.addChild(bracketLabel);
+					this.numberOfLoopsLabel = cc.LabelTTF.create("2", "mikadoBold", 20);
+					this.numberOfLoopsLabel.setPosition(-10, 3);
+					this.addChild(this.numberOfLoopsLabel);
+				},
+				adjustable: true,
 			},
 
 			CLOSE_BRACKET: {
 				filename: "blank_red",
 				include_in_container: false,
-				label: ")",
+				setup:function() {
+					var label = cc.LabelTTF.create(")", "mikadoBold", 20);
+					label.setPosition(0, 3);
+					this.addChild(label);
+				},
+				adjustable: false,
 			},
 		},
 
