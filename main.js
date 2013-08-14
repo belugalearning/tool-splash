@@ -220,6 +220,7 @@ define(['exports', 'cocos2d', 'qlayer', 'toollayer', 'instructioncontainer', 'in
                 this.stopButton.setGreyedOut(!this.following);
                 this.clearButton.setGreyedOut(this.following);
                 this.instructionTicker.showPlayingDisplay(this.following);
+                this.instructionTicker.setInstructionsDraggable(!this.following);
                 if (!this.following) {
                     this.instructionTicker.unhighlightAll();
                 };

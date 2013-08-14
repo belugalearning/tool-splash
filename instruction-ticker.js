@@ -324,6 +324,12 @@ define(['canvasclippingnode', 'draggable', 'scrollbar', 'blbutton', 'controllaye
 			this.instructions.splice(positionIndex, 0, instructionBox);
 		},
 
+		setInstructionsDraggable:function(draggable) {
+			for (var i = 0; i < this.instructions.length; i++) {
+				this.instructions[i].setEnabled(draggable);
+			};
+		},
+
 		setInstructionTouchFunctions:function(instructionBox) {
 			var self = this;
 
