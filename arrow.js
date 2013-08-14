@@ -62,8 +62,23 @@ define(['constants'], function(constants) {
 					this.following = false;
 				};
 			} else {
-				this.breakMovement = true;
 				this.freakOut();
+			};
+		},
+
+		setRotationX:function(rotationX) {
+			if (!this.breakMovement) {
+				this._super(rotationX);
+			} else {
+				this.following = false;
+			};
+		},
+
+		setRotationY:function(rotationY) {
+			if (!this.breakMovement) {
+				this._super(rotationY);
+			} else {
+				this.following = false;
 			};
 		},
 
@@ -85,6 +100,9 @@ define(['constants'], function(constants) {
 			};
 			var returnAction = cc.MoveTo.create(0.05, homePosition);
 			shakes.push(returnAction);
+			var self = this;
+			var callBreak = cc.CallFunc.create(function() {self.breakMovement = true});
+			shakes.push(callBreak);
 			var sequence = cc.Sequence.create(shakes);
 			this.drawing = false;
 			this.runAction(sequence);
