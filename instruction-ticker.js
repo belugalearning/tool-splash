@@ -391,6 +391,14 @@ define(['canvasclippingnode', 'draggable', 'scrollbar', 'blbutton', 'controllaye
 			this.positionInstructions();
 		},
 
+		clearInstructions:function() {
+			this.removeInstructions(this.instructions);
+			while (this.spaceRows.length > 2) {
+				this.removeLastSpaceRow();
+			};
+			this.processChangeInNumberOfRows();
+		},
+
 		unhighlightAll:function() {
 			for (var i = 0; i < this.instructions.length; i++) {
 				this.instructions[i].highlight(false);

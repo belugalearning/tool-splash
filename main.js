@@ -127,6 +127,15 @@ define(['exports', 'cocos2d', 'qlayer', 'toollayer', 'instructioncontainer', 'in
             this.stopButton.onTouchUp(function() {
                 self.splashNode.arrow.breakMovement = true;
             });
+
+            this.clearButton = new BLButton();
+            this.clearButton.initWithFile(window.bl.getResource('clear_button'));
+            this.clearButton.setPosition(970, 400);
+            this.addChild(this.clearButton);
+            this.clearButton.onTouchUp(function() {
+                self.instructionTicker.clearInstructions();
+                self.splashNode.reset();
+            })
         },
 
         setupInstructionButtons:function() {
@@ -209,6 +218,7 @@ define(['exports', 'cocos2d', 'qlayer', 'toollayer', 'instructioncontainer', 'in
                 this.speedUp.setGreyedOut(this.following);
                 this.speedDown.setGreyedOut(this.following);
                 this.stopButton.setGreyedOut(!this.following);
+                this.clearButton.setGreyedOut(this.following);
                 this.instructionTicker.showPlayingDisplay(this.following);
                 if (!this.following) {
                     this.instructionTicker.unhighlightAll();
