@@ -399,7 +399,7 @@ define(['canvasclippingnode', 'draggable', 'scrollbar', 'blbutton', 'controllaye
 
 		showControlForInstruction:function(instruction) {
 			var index = this.instructions.indexOf(instruction);
-			this.controlLayer.target = instruction;
+			this.controlLayer.setTarget(instruction);
 			var positionInWorld = this.spaces[index].getParent().convertToWorldSpace(this.spaces[index].getPosition());
 			var position = this.convertToNodeSpace(positionInWorld);
 			this.controlLayer.setPosition(position);

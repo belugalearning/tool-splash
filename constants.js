@@ -99,7 +99,17 @@ define([], function() {
 				instruction_parameters: {
 					move_by_distance: 1,
 				},
+				setup:function() {
+					var label = cc.LabelTTF.create("", "mikadoBold", 15);
+					label.setPosition(2, -9);
+					this.addChild(label);
+					this.setAdjustableLabel(label);
+				},
 				adjustable: true,
+				adjustable_parameter: "move_by_distance",
+				adjustable_min:1,
+				adjustable_max:9,
+				adjustable_step:1,
 			},
 
 			LOOP: {
@@ -121,8 +131,13 @@ define([], function() {
 					this.numberOfLoopsLabel = cc.LabelTTF.create("2", "mikadoBold", 20);
 					this.numberOfLoopsLabel.setPosition(-10, 3);
 					this.addChild(this.numberOfLoopsLabel);
+					this.setAdjustableLabel(this.numberOfLoopsLabel);
 				},
 				adjustable: true,
+				adjustable_parameter: "loop_times",
+				adjustable_min: 1,
+				adjustable_max: 9,
+				adjustable_step: 1,
 			},
 
 			CLOSE_BRACKET: {

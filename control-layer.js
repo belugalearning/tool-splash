@@ -4,6 +4,7 @@ define(['blbutton'], function(BLButton) {
 		ctor:function() {
 			this._super();
 			this.target;
+			var self = this;
 
 			var upButton = new BLButton();
 			upButton.registerWithTouchDispatcher = function() {
@@ -12,7 +13,7 @@ define(['blbutton'], function(BLButton) {
 			upButton.initWithFile(window.bl.getResource('up_button'));
 			upButton.setPosition(0, 55);
 			upButton.onTouchUp(function() {
-				this.target.processUp();
+				self.target.processUp();
 			});
 			this.addChild(upButton);
 			this.upButton = upButton;
@@ -24,7 +25,7 @@ define(['blbutton'], function(BLButton) {
 			downButton.initWithFile(window.bl.getResource('down_button'));
 			downButton.setPosition(0, -60);
 			downButton.onTouchUp(function() {
-				this.target.processDown();
+				self.target.processDown();
 			});
 			this.addChild(downButton);
 			this.downButton = downButton;
@@ -44,6 +45,10 @@ define(['blbutton'], function(BLButton) {
 	        cc.Director.getInstance().getTouchDispatcher().addTargetedDelegate(this, -200, false);
 	    },
 
+	    setTarget:function(target) {
+	    	this.target = target;
+	    },
+
 	    setActive:function(active) {
 	    	this.setVisible(active);
 	    	this.upButton.setEnabled(active);
@@ -51,12 +56,8 @@ define(['blbutton'], function(BLButton) {
 	    },
 
 	    onTouchBegan:function() {
-	    	return true;
-	    },
-
-		onTouchEnded:function() {
 			this.setActive(false);
-		},
+	    },
 	})
 
 	return ControlLayer;
