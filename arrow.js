@@ -83,7 +83,7 @@ define(['constants'], function(constants) {
 		},
 
 		setBoundary:function(boundary) {
-			this.boundary = boundary;
+			this.boundary = cc.RectMake(boundary.origin.x-1, boundary.origin.y-1, boundary.size.width+2, boundary.size.height+2);
 		},
 
 		freakOut:function() {
