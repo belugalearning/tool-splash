@@ -100,7 +100,7 @@ define([], function() {
 					move_by_distance: 1,
 				},
 				setup:function() {
-					var label = cc.LabelTTF.create("", "mikadoBold", 15);
+					var label = cc.LabelTTF.create("1", "mikadoBold", 15);
 					label.setPosition(2, -9);
 					this.addChild(label);
 					this.setAdjustableLabel(label);
