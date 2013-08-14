@@ -141,21 +141,9 @@ define(['exports', 'cocos2d', 'qlayer', 'toollayer', 'instructioncontainer', 'in
         },
 
         setupInstructionButtons:function() {
-            var self = this;
-            var defaultButtonZOrder = 1;
-            _.each(InstructionTypes, function(type) {
-                if (type["include_in_container"]) {
-                    var instructionButton = new InstructionDragButton()
-                    instructionButton.initWithType(type);
-                    var positionInContainer = self.instructionContainer.getPositionForInstruction(type);
-                    var positionInWorld = self.instructionContainer.convertToWorldSpace(positionInContainer);
-                    instructionButton.setPosition(positionInWorld);
-                    instructionButton.setZOrder(defaultButtonZOrder);
-                    self.addChild(instructionButton);
-
-                    self.setInstructionTouchFunctions(instructionButton);
-                };
-            })
+            for (var i = 0; i < this.instructionContainer.buttons.length; i++) {
+                this.setInstructionTouchFunctions(this.instructionContainer.buttons[i]);
+            };
         },
 
         setInstructionTouchFunctions:function(button) {
@@ -163,9 +151,12 @@ define(['exports', 'cocos2d', 'qlayer', 'toollayer', 'instructioncontainer', 'in
 
             var highlighting = false;
 
-            button.onTouchDown(function() {
+            button.onTouchDown(function(touchLocation) {
+                this.removeFromParent();
+                self.addChild(this);
+                this.setPosition(touchLocation);
                 this.setVisible(true);
-                self.reorderChild(button, foregroundZOrder);
+                this.setZOrder(foregroundZOrder);
             });
 
             button.onMoved(function(touchLocation) {
@@ -203,12 +194,11 @@ define(['exports', 'cocos2d', 'qlayer', 'toollayer', 'instructioncontainer', 'in
                         self.instructionTicker.dropInInstructionBoxes([this], touchRelative);
                         this.linked = [];
                     };
-                    button.setupDraggable();
-                    self.setInstructionTouchFunctions(button);
                 } else {
-                    this.setVisible(false);
-                    this.returnToLastPosition();
+                    this.removeFromParent();
                 };
+                button.setupDraggable();
+                self.setInstructionTouchFunctions(button);
                 if (highlighting) {
                     self.instructionTicker.clearHighlight();
                     highlighting = false;
