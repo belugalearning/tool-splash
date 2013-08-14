@@ -432,6 +432,34 @@ define(['canvasclippingnode', 'draggable', 'scrollbar', 'blbutton', 'controllaye
 				};
 			};
 		},
+
+		showInvalidBrackets:function() {
+			var brackets = [];
+			for (var i = 0; i < this.instructions.length; i++) {
+				var instruction = this.instructions[i];
+				if (instruction.type === InstructionTypes.OPEN_BRACKET || instruction.type === InstructionTypes.CLOSE_BRACKET) {
+					brackets.push(instruction);
+				};
+			};
+			var shakeAction = function(index) {
+				var shakes = [];
+				var homePosition = brackets[index].getPosition();
+				var radius = 7;
+				for (var i = 0; i < 20; i++) {
+					var angle = i * 0.618 * Math.PI * 2;
+					var offset = cc.p(Math.random() * 2 + radius * Math.cos(angle), Math.random() * 2 + radius * Math.sin(angle));
+					var shake = cc.MoveTo.create(0.05, cc.pAdd(homePosition, offset));
+					shakes.push(shake);
+				};
+				var returnAction = cc.MoveTo.create(0.05, homePosition);
+				shakes.push(returnAction);
+				var sequence = cc.Sequence.create(shakes);
+				return sequence;
+			};
+			for (var i = 0; i < brackets.length; i++) {
+				brackets[i].runAction(shakeAction(i));
+			};
+		},
 	})
 
 	return InstructionTicker;

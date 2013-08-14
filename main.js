@@ -89,6 +89,8 @@ define(['exports', 'cocos2d', 'qlayer', 'toollayer', 'instructioncontainer', 'in
                     var instructions = self.instructionTicker.instructions;
                     arrow.followInstructions(instructions);
                     // arrow.freakOut();
+                } else {
+                    self.instructionTicker.showInvalidBrackets();
                 };
             });
 
