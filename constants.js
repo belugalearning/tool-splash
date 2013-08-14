@@ -92,10 +92,17 @@ define([], function() {
 				adjustable: false,
 			},
 
-			STEP: {
-				filename: "step",
+			STEP_MULTIPLE: {
+				filename: "step_multiple",
 				include_in_container: true,
 				container_position: 8,
+				replace_with:["STEP"],
+			},
+
+			STEP: {
+				filename: "step",
+				include_in_container: false,
+				// container_position: 8,
 				instruction_parameters: {
 					move_by_distance: 1,
 				},
@@ -116,6 +123,7 @@ define([], function() {
 				filename: "loop",
 				include_in_container: true,
 				container_position: 9,
+				replace_with:["OPEN_BRACKET", "CLOSE_BRACKET"],
 			},
 
 			OPEN_BRACKET: {

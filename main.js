@@ -187,14 +187,18 @@ define(['exports', 'cocos2d', 'qlayer', 'toollayer', 'instructioncontainer', 'in
                 if (self.instructionTicker.touched(touchLocation)) {
                     var touchRelative = self.instructionTicker.convertToNodeSpace(touchLocation);
                     this.removeFromParent();
-                    if (this.type === InstructionTypes.LOOP) {
-                        var openBracket = new InstructionDraggable();
-                        openBracket.initWithType(InstructionTypes.OPEN_BRACKET);
-                        var closeBracket = new InstructionDraggable();
-                        closeBracket.initWithType(InstructionTypes.CLOSE_BRACKET);
-                        self.instructionTicker.dropInInstructionBoxes([openBracket, closeBracket], touchRelative);
-                        openBracket.linked = [closeBracket];
-                        closeBracket.linked = [openBracket];
+                    if (this.type["replace_with"] !== undefined) {
+                        var replaceInstructions = [];
+                        for (var i = 0; i < this.type["replace_with"].length; i++) {
+                            var replaceType = this.type["replace_with"][i];
+                            var replaceInstruction = new InstructionDraggable();
+                            replaceInstruction.initWithType(InstructionTypes[replaceType]);
+                            replaceInstructions.push(replaceInstruction);
+                        };
+                        for (var i = 0; i < replaceInstructions.length; i++) {
+                            replaceInstructions[i].linked = _.without(replaceInstructions, replaceInstructions[i]);
+                        };
+                        self.instructionTicker.dropInInstructionBoxes(replaceInstructions, touchRelative);                  
                     } else {
                         self.instructionTicker.dropInInstructionBoxes([this], touchRelative);
                         this.linked = [];
