@@ -52,10 +52,14 @@ define(['constants'], function(constants) {
 			};
 			var previousPoint = this.getPosition();
 			if (this.boundary === undefined || this.ignoreBoundary === true || cc.rectContainsPoint(this.boundary, point)) {
-				this._super(point);
-				if (this.drawing) {
-					this.drawingNode.drawDot(previousPoint, radius-1, color);
-					this.drawingNode.drawSegment(previousPoint, point, radius, color);
+				if (!this.breakMovement) {
+					this._super(point);
+					if (this.drawing) {
+						this.drawingNode.drawDot(previousPoint, radius-1, color);
+						this.drawingNode.drawSegment(previousPoint, point, radius, color);
+					};
+				} else {
+					this.following = false;
 				};
 			} else {
 				this.breakMovement = true;
