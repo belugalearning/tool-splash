@@ -1,48 +1,51 @@
 define([], function() {
 	'use strict';
 
+	var upCommand = {
+		include_in_container: true,
+		instruction_parameters: {
+			turn_to_direction:270,
+			move_by_distance:1,
+		},
+		adjustable: false,
+	};
+
+	var downCommand = {
+		include_in_container: true,
+		instruction_parameters: {
+			turn_to_direction:90,
+			move_by_distance:1,
+		},
+		adjustable: false,
+	};
+
+	var leftCommand = {
+		include_in_container: true,
+		instruction_parameters: {
+			turn_to_direction:180,
+			move_by_distance:1,
+		},
+		adjustable: false,
+	};
+
+	var rightCommand = {
+		include_in_container: true,
+		instruction_parameters: {
+			turn_to_direction:0,
+			move_by_distance:1,
+		},
+		adjustable: false,
+	};
+
+
 	return {
 		'InstructionTypes':
 		{
-			UP_ARROW: {
-				filename:"arrow_up",
-				include_in_container: true,
-				instruction_parameters: {
-					turn_to_direction:270,
-					move_by_distance:1,
-				},
-				adjustable: false,
-			},
+			UP_ARROW: _.extend(_.clone(upCommand), {filename:"splash_blocks_arrow_up"}),
+			DOWN_ARROW: _.extend(_.clone(downCommand), {filename:"arrow_down"}),
+			LEFT_ARROW: _.extend(_.clone(leftCommand), {filename:"arrow_left"}),
+			RIGHT_ARROW: _.extend(_.clone(rightCommand), {filename:"arrow_right"}),
 
-			DOWN_ARROW: {
-				filename:"arrow_down",
-				include_in_container: true,
-				instruction_parameters: {
-					turn_to_direction:90,
-					move_by_distance:1,
-				},
-				adjustable: false,
-			},
-
-			LEFT_ARROW: {
-				filename: "arrow_left",
-				include_in_container: true,
-				instruction_parameters: {
-					turn_to_direction:180,
-					move_by_distance:1,
-				},
-				adjustable: false,
-			},
-
-			RIGHT_ARROW: {
-				filename: "arrow_right",
-				include_in_container: true,
-				instruction_parameters: {
-					turn_to_direction:0,
-					move_by_distance:1,
-				},
-				adjustable: false,
-			},
 
 			DEGREES_30: {
 				filename: "degrees_30",
@@ -162,6 +165,16 @@ define([], function() {
 				},
 				adjustable: false,
 			},
+			
+			UP_WORD: _.extend(_.clone(upCommand), {filename:"up_word"}),
+			DOWN_WORD: _.extend(_.clone(downCommand), {filename:"down_word"}),
+			LEFT_WORD: _.extend(_.clone(leftCommand), {filename:"left_word"}),
+			RIGHT_WORD: _.extend(_.clone(rightCommand), {filename:"right_word"}),
+
+			NORTH: _.extend(_.clone(upCommand), {filename:"north"}),
+			SOUTH: _.extend(_.clone(downCommand), {filename:"south"}),
+			WEST: _.extend(_.clone(leftCommand), {filename:"west"}),
+			EAST: _.extend(_.clone(rightCommand), {filename:"east"}),
 		},
 
 		'TurnStyles': {
