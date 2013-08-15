@@ -31,7 +31,7 @@ define(['instructiondragbutton', 'constants'], function(InstructionDragButton, c
 		},
 
 		getPositionForInstruction:function(type) {
-			return cc.p(50 + 63 * type["container_position"], this.getContentSize().height/2 + 3);
+			return cc.p(50 + 63 * this.buttons.length, this.getContentSize().height/2 + 3);
 		},
 	})
 

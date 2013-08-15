@@ -7,7 +7,6 @@ define([], function() {
 			UP_ARROW: {
 				filename:"arrow_up",
 				include_in_container: true,
-				container_position: 0,
 				instruction_parameters: {
 					turn_to_direction:270,
 					move_by_distance:1,
@@ -18,7 +17,6 @@ define([], function() {
 			DOWN_ARROW: {
 				filename:"arrow_down",
 				include_in_container: true,
-				container_position: 1,
 				instruction_parameters: {
 					turn_to_direction:90,
 					move_by_distance:1,
@@ -29,7 +27,6 @@ define([], function() {
 			LEFT_ARROW: {
 				filename: "arrow_left",
 				include_in_container: true,
-				container_position: 2,
 				instruction_parameters: {
 					turn_to_direction:180,
 					move_by_distance:1,
@@ -40,7 +37,6 @@ define([], function() {
 			RIGHT_ARROW: {
 				filename: "arrow_right",
 				include_in_container: true,
-				container_position: 3,
 				instruction_parameters: {
 					turn_to_direction:0,
 					move_by_distance:1,
@@ -51,7 +47,6 @@ define([], function() {
 			DEGREES_30: {
 				filename: "degrees_30",
 				include_in_container: true,
-				container_position: 4,
 				instruction_parameters: {
 					turn_by_direction:30,
 					move_by_distance:0,
@@ -62,7 +57,6 @@ define([], function() {
 			DEGREES_45: {
 				filename: "degrees_45",
 				include_in_container: true,
-				container_position: 5,
 				instruction_parameters: {
 					turn_by_direction:45,
 					move_by_distance:0,
@@ -73,7 +67,6 @@ define([], function() {
 			DEGREES_60: {
 				filename: "degrees_60",
 				include_in_container: true,
-				container_position: 6,
 				instruction_parameters: {
 					turn_by_direction:60,
 					move_by_distance:0,
@@ -84,7 +77,6 @@ define([], function() {
 			DEGREES_90: {
 				filename: "degrees_90",
 				include_in_container: true,
-				container_position: 7,
 				instruction_parameters: {
 					turn_by_direction:90,
 					move_by_distance:0,
@@ -95,14 +87,12 @@ define([], function() {
 			STEP_MULTIPLE: {
 				filename: "step_multiple",
 				include_in_container: true,
-				container_position: 8,
 				replace_with:["STEP"],
 			},
 
 			STEP: {
 				filename: "step",
 				include_in_container: false,
-				// container_position: 8,
 				instruction_parameters: {
 					move_by_distance: 1,
 				},
@@ -122,7 +112,6 @@ define([], function() {
 			LOOP: {
 				filename: "loop",
 				include_in_container: true,
-				container_position: 9,
 				replace_with:["OPEN_BRACKET", "CLOSE_BRACKET"],
 			},
 
