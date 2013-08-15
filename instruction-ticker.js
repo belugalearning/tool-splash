@@ -31,7 +31,6 @@ define(['canvasclippingnode', 'draggable', 'scrollbar', 'blbutton', 'controllaye
 				return self.spaceRows.length * self.spaceHeight;
 			};
 			clipper.addChild(this.spacesNode);
-			// this.addChild(this.spacesNode);
 
 			this.instructions = [];
 			this.valid;
@@ -61,6 +60,7 @@ define(['canvasclippingnode', 'draggable', 'scrollbar', 'blbutton', 'controllaye
 			var scrollBarX = 914;
 
 			var scrollBar = new ScrollBar();
+			scrollBar.initWithOrientation(true);
 			this.scrollBar = scrollBar;
 			this.addChild(scrollBar);
 
