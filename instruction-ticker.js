@@ -81,6 +81,7 @@ define(['canvasclippingnode', 'draggable', 'scrollbar', 'blbutton', 'controllaye
 				this.scrollProportion = Math.min(proportion, 1);
 				scrollBar.setPosition(cc.p(scrollBarX, this.upperLimit() - this.scrollProportion * (this.upperLimit() - this.lowerLimit())));
 				this.scrollSpaceNode();
+				this.enableVisibleBoxes();
 			},
 
 			scrollBar.processUserScroll = function() {
@@ -118,6 +119,20 @@ define(['canvasclippingnode', 'draggable', 'scrollbar', 'blbutton', 'controllaye
 				this.scrollToHeight(height);
 			};
 
+			scrollBar.enableVisibleBoxes = function() {
+				var visibleBox = cc.RectMake(15, 10, self.boxWidth, self.boxHeight);
+				for (var i = 0; i < self.instructions.length; i++) {
+					var instruction =  self.instructions[i];
+					var positionInWorld = instruction.getParent().convertToWorldSpace(instruction.getPosition());
+					var positionInTicker = self.convertToNodeSpace(positionInWorld);
+					if (cc.rectContainsPoint(visibleBox, positionInTicker)) {
+						instruction.setEnabled(true);
+					} else {
+						instruction.setEnabled(false);
+					};
+				};
+			}
+
 			scrollBar.setHeightForNumberOfRows();
 
 			scrollBar.onTouchDown(function() {
@@ -126,6 +141,10 @@ define(['canvasclippingnode', 'draggable', 'scrollbar', 'blbutton', 'controllaye
 
 			scrollBar.onMoved(function() {
 				this.processUserScroll();
+			});
+
+			scrollBar.onMoveEnded(function() {
+				this.enableVisibleBoxes();
 			});
 		},
 
@@ -336,8 +355,8 @@ define(['canvasclippingnode', 'draggable', 'scrollbar', 'blbutton', 'controllaye
 				this.insertInstructionBoxInPosition(instructionBox, dropIndex + i);
 				this.setInstructionTouchFunctions(instructionBox);
 			};
-			this.positionInstructions();
 			this.linkBrackets();
+			this.positionInstructions();
 			var controlsVisible = false;
 			for (var i = 0; i < instructionBoxes.length; i++) {
 				var instructionBox = instructionBoxes[i];
