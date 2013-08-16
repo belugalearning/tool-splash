@@ -371,25 +371,26 @@ define(['canvasclippingnode', 'draggable', 'scrollbar', 'blbutton', 'controllaye
             });
 
             instructionBox.onMoveEnded(function(touchLocation) {
-            	if (!dragged) {
-            		this.returnToLastPosition();
-            	} else {
-	                if (self.touched(touchLocation)) {
+                if (self.touched(touchLocation)) {
+                	if (!dragged) {
+                		this.returnToLastPosition()
+                	} else {;
 	                    var touchRelative = self.convertToNodeSpace(touchLocation);
 	                    this.removeFromParent();
 		                self.dropInInstructionBoxes([this], touchRelative);
-		        		if (this.type['adjustable']) {
-		            		self.showControlForInstruction(this);
-		        		};
+
 		            	dragged = false;
-	                } else {
-	                	self.removeInstructions([this].concat(this.linked));
-	                };
-	                if (highlighting) {
-	                    self.clearHighlight();
-	                    highlighting = false;
-	                };
-            	};
+		            }
+	        		if (this.type['adjustable']) {
+	            		self.showControlForInstruction(this);
+	        		};
+                } else {
+                	self.removeInstructions([this].concat(this.linked));
+                };
+                if (highlighting) {
+                    self.clearHighlight();
+                    highlighting = false;
+                };
             });
 		},
 
