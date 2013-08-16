@@ -133,7 +133,7 @@ define([], function() {
 					move_by_distance: 1,
 				},
 				setup:function() {
-					var label = cc.LabelTTF.create("1", "mikadoBold", 16);
+					var label = cc.LabelTTF.create("", "mikadoBold", 16);
 					label.setPosition(2, -6);
 					this.addChild(label);
 					this.setAdjustableLabel(label);
@@ -143,6 +143,9 @@ define([], function() {
 				adjustable_min:1,
 				adjustable_max:9,
 				adjustable_step:1,
+				formatter:function(string) {
+					return string === "1" ? "" : "x " + string;
+				},
 			},
 
 			LOOP: {
@@ -161,7 +164,7 @@ define([], function() {
 					var bracketLabel = cc.LabelTTF.create("(", "mikadoBold", 20);
 					bracketLabel.setPosition(10, 3);
 					this.addChild(bracketLabel);
-					this.numberOfLoopsLabel = cc.LabelTTF.create("2", "mikadoBold", 20);
+					this.numberOfLoopsLabel = cc.LabelTTF.create("2 x", "mikadoBold", 20);
 					this.numberOfLoopsLabel.setPosition(-10, 3);
 					this.addChild(this.numberOfLoopsLabel);
 					this.setAdjustableLabel(this.numberOfLoopsLabel);
@@ -186,6 +189,9 @@ define([], function() {
 				adjustable_min: 1,
 				adjustable_max: 9,
 				adjustable_step: 1,
+				formatter:function(string) {
+					return string + " x";
+				},
 			},
 
 			CLOSE_BRACKET: {
