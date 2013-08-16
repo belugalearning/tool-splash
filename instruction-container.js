@@ -52,17 +52,26 @@ define(['instructiondragbutton', 'scrollbar', 'constants'], function(Instruction
 
             scrollBar.setDragAreaRect(cc.RectMake(scrollBarLowerX, scrollBarY, scrollBarUpperX - scrollBarLowerX, 0));
             var barSpace = scrollBarUpperX - scrollBarLowerX;
-            var height = (barSpace * this.getContentSize().width/this.getPositionForInstruction(this.buttons.length - 1).x).putInBounds(20, barSpace);
+            var scrollNodeSpace = this.getPositionForInstruction(this.buttons.length - 1).x
+            var height = (barSpace * this.getContentSize().width/scrollNodeSpace).putInBounds(20, barSpace);
             scrollBar.setHeight(height);
             var lowerLimit = scrollBarLowerX + scrollBar.getHeight()/2;
             var upperLimit = scrollBarUpperX - scrollBar.getHeight()/2;
             scrollBar.setPosition(cc.p(lowerLimit, scrollBarY));
 
-/*			var scrollBarSpace = scrollBarUpperY - scrollBarLowerY;
-			var height = (scrollBarSpace * self.boxHeight / self.spacesNode.height()).putInBounds(20, scrollBarSpace);
-			this.setHeight(height);
-			this.scrollToProportion(this.scrollProportion);
-*/
+
+            scrollBar.onTouchDown(function() {
+                this.processUserScroll();
+            });
+
+            scrollBar.onMoved(function() {
+                this.processUserScroll();
+            });
+
+            scrollBar.processUserScroll = function() {
+                var scrollProportion = (this.getPosition().x - lowerLimit)/(upperLimit - lowerLimit);
+                self.scrollNode.setPosition(-scrollProportion * (scrollNodeSpace - self.getContentSize().width), 0);
+            };
 		},
 	})
 
