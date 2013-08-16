@@ -75,64 +75,55 @@ define(['exports', 'cocos2d', 'qlayer', 'toollayer', 'instructioncontainer', 'in
             this.splashNode.setPosition(this.getContentSize().width/2, (topOfTicker + this.getContentSize().height)/2);
             this.addChild(this.splashNode);
 
+            var self = this;
+
+            var playButtonPanel = new cc.Sprite();
+            playButtonPanel.initWithFile(window.bl.getResource('play_button_panel'));
+            playButtonPanel.setPosition(this._windowSize.width - playButtonPanel.getContentSize().width/2, 700);
+            this.addChild(playButtonPanel);
+
             this.playButton = new BLButton();
             this.playButton.initWithFile(window.bl.getResource('play_button'));
-            this.playButton.setPosition(this._windowSize.width - this.playButton.getContentSize().width/2, 700);
-            this.addChild(this.playButton);
+            this.playButton.setPosition(cc.pAdd(playButtonPanel.getAnchorPointInPoints(), cc.p(0, -1)));
+            playButtonPanel.addChild(this.playButton);
 
-            var self = this;
-            this.playButton.onTouchUp(function() {
+            var play = function(speed) {
                 if (self.instructionTicker.valid) {
                     self.splashNode.reset();
                     var arrow = self.splashNode.arrow;
-                    arrow.speed = speedLabel.speed;
+                    arrow.speed = speed;
                     var instructions = self.instructionTicker.instructions;
                     arrow.followInstructions(instructions);
-                    // arrow.freakOut();
                 } else {
                     self.instructionTicker.showInvalidBrackets();
                 };
-            });
+            };
 
-            var speedLabel = new cc.LabelTTF.create("", "mikadoBold", 20);
-            speedLabel.setPosition(970, 580);
-            this.addChild(speedLabel);
-            speedLabel.speed = 1;
-            speedLabel.setString(speedLabel.speed);
-
-            this.speedUp = new BLButton();
-            this.speedUp.initWithFile(window.bl.getResource('up_button'));
-            this.speedUp.setPosition(970, 620);
-            this.addChild(this.speedUp);
-            this.speedUp.onTouchUp(function() {
-                if (speedLabel.speed < 10) {
-                    speedLabel.speed++;
-                    speedLabel.setString(speedLabel.speed);
-                };
-            });
-
-            this.speedDown = new BLButton();
-            this.speedDown.initWithFile(window.bl.getResource('down_button'));
-            this.speedDown.setPosition(970, 520);
-            this.addChild(this.speedDown);
-            this.speedDown.onTouchUp(function() {
-                if (speedLabel.speed > 1) {
-                    speedLabel.speed--;
-                    speedLabel.setString(speedLabel.speed);
-                };
+            this.playButton.onTouchUp(function() {
+                play(1);
             });
 
             this.stopButton = new BLButton();
             this.stopButton.initWithFile(window.bl.getResource('free_form_closebutton'));
-            this.stopButton.setPosition(970, 450);
-            this.addChild(this.stopButton);
+            this.stopButton.setPosition(cc.pAdd(playButtonPanel.getAnchorPointInPoints(), cc.p(0, -1)));
+            playButtonPanel.addChild(this.stopButton);
             this.stopButton.onTouchUp(function() {
                 self.splashNode.arrow.breakMovement = true;
             });
+            this.stopButton.setEnabled(false);
+            this.stopButton.setVisible(false);
+
+            this.fastForwardButton = new BLButton();
+            this.fastForwardButton.initWithFile(window.bl.getResource('fastforward_button'));
+            this.fastForwardButton.setPosition(this._windowSize.width - this.fastForwardButton.getContentSize().width/2, 610);
+            this.addChild(this.fastForwardButton);
+            this.fastForwardButton.onTouchUp(function() {
+                play(8)
+            });
 
             this.clearButton = new BLButton();
-            this.clearButton.initWithFile(window.bl.getResource('clear_button'));
-            this.clearButton.setPosition(970, 400);
+            this.clearButton.initWithFile(window.bl.getResource('reset_button'));
+            this.clearButton.setPosition(this._windowSize.width - this.clearButton.getContentSize().width/2, 450);
             this.addChild(this.clearButton);
             this.clearButton.onTouchUp(function() {
                 self.instructionTicker.clearInstructions();
@@ -206,14 +197,19 @@ define(['exports', 'cocos2d', 'qlayer', 'toollayer', 'instructioncontainer', 'in
             });
         },
 
+        showPlay:function(play) {
+            this.playButton.setVisible(play);
+            this.playButton.setEnabled(play);
+            this.stopButton.setVisible(!play);
+            this.stopButton.setEnabled(!play);
+        },
+
         update:function() {
             this._super();
             if (this.following !== this.splashNode.arrow.following) {
                 this.following = this.splashNode.arrow.following;
-                this.playButton.setGreyedOut(this.following);
-                this.speedUp.setGreyedOut(this.following);
-                this.speedDown.setGreyedOut(this.following);
-                this.stopButton.setGreyedOut(!this.following);
+                this.showPlay(!this.following);
+                this.fastForwardButton.setGreyedOut(this.following);
                 this.clearButton.setGreyedOut(this.following);
                 this.instructionTicker.showPlayingDisplay(this.following);
                 this.instructionTicker.setInstructionsDraggable(!this.following);

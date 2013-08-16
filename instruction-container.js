@@ -47,7 +47,6 @@ define(['instructiondragbutton', 'scrollbar', 'constants'], function(Instruction
             var scrollBar = new ScrollBar();
             this.scrollBar = scrollBar;
             scrollBar.initWithOrientation(false);
-            // scrollBar.setPosition(this.getAnchorPointInPoints());
             this.addChild(scrollBar);
 
             scrollBar.setDragAreaRect(cc.RectMake(scrollBarLowerX + scrollBar.bottomHeight(), scrollBarY,

@@ -10,8 +10,8 @@ define(['blbutton'], function(BLButton) {
 			upButton.registerWithTouchDispatcher = function() {
 				cc.Director.getInstance().getTouchDispatcher().addTargetedDelegate(this, -210, true);
 			};
-			upButton.initWithFile(window.bl.getResource('up_button'));
-			upButton.setPosition(0, 55);
+			upButton.initWithFile(window.bl.getResource('up_arrow'));
+			upButton.setPosition(0, 40);
 			upButton.onTouchUp(function() {
 				self.target.processUp();
 			});
@@ -22,8 +22,8 @@ define(['blbutton'], function(BLButton) {
 			downButton.registerWithTouchDispatcher = function() {
 				cc.Director.getInstance().getTouchDispatcher().addTargetedDelegate(this, -210, true);
 			};
-			downButton.initWithFile(window.bl.getResource('down_button'));
-			downButton.setPosition(0, -60);
+			downButton.initWithFile(window.bl.getResource('down_arrow'));
+			downButton.setPosition(0, -35);
 			downButton.onTouchUp(function() {
 				self.target.processDown();
 			});
