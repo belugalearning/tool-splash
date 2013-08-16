@@ -106,6 +106,7 @@ define([], function() {
 				},
 				setup:function() {
 					var label = cc.LabelTTF.create("0°", "mikadoBold", 20);
+					label.setPosition(5, 0);
 					this.addChild(label);
 					this.setAdjustableLabel(label);
 				},
