@@ -50,7 +50,8 @@ define(['instructiondragbutton', 'scrollbar', 'constants'], function(Instruction
             // scrollBar.setPosition(this.getAnchorPointInPoints());
             this.addChild(scrollBar);
 
-            scrollBar.setDragAreaRect(cc.RectMake(scrollBarLowerX, scrollBarY, scrollBarUpperX - scrollBarLowerX, 0));
+            scrollBar.setDragAreaRect(cc.RectMake(scrollBarLowerX + scrollBar.bottomHeight(), scrollBarY,
+                scrollBarUpperX - scrollBarLowerX - scrollBar.topHeight() - scrollBar.bottomHeight(), 0));
             var barSpace = scrollBarUpperX - scrollBarLowerX;
             var scrollNodeSpace = this.getPositionForInstruction(this.buttons.length - 1).x
             var height = (barSpace * this.getContentSize().width/scrollNodeSpace).putInBounds(20, barSpace);

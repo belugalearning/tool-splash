@@ -64,7 +64,8 @@ define(['canvasclippingnode', 'draggable', 'scrollbar', 'blbutton', 'controllaye
 			this.scrollBar = scrollBar;
 			this.addChild(scrollBar);
 
-			scrollBar.setDragAreaRect(cc.RectMake(scrollBarX, scrollBarLowerY, 0, scrollBarUpperY - scrollBarLowerY));
+			scrollBar.setDragAreaRect(cc.RectMake(scrollBarX, scrollBarLowerY + scrollBar.bottomHeight(), 0,
+				scrollBarUpperY - scrollBarLowerY - scrollBar.topHeight() - scrollBar.bottomHeight()));
 
 			scrollBar.scrollProportion = 0;
 
