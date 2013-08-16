@@ -49,7 +49,7 @@ define(['canvasclippingnode', 'draggable', 'scrollbar', 'blbutton', 'controllaye
 			this.controlLayer.setTouchPriority(-200);
 			this.addChild(this.controlLayer);
 
-
+			this.playing = false;
 		},
 
 		setupScrollBar:function() {
@@ -81,7 +81,7 @@ define(['canvasclippingnode', 'draggable', 'scrollbar', 'blbutton', 'controllaye
 				this.scrollProportion = Math.min(proportion, 1);
 				scrollBar.setPosition(cc.p(scrollBarX, this.upperLimit() - this.scrollProportion * (this.upperLimit() - this.lowerLimit())));
 				this.scrollSpaceNode();
-				this.enableVisibleBoxes();
+				self.enableVisibleBoxes();
 			},
 
 			scrollBar.processUserScroll = function() {
@@ -119,20 +119,6 @@ define(['canvasclippingnode', 'draggable', 'scrollbar', 'blbutton', 'controllaye
 				this.scrollToHeight(height);
 			};
 
-			scrollBar.enableVisibleBoxes = function() {
-				var visibleBox = cc.RectMake(15, 10, self.boxWidth, self.boxHeight);
-				for (var i = 0; i < self.instructions.length; i++) {
-					var instruction =  self.instructions[i];
-					var positionInWorld = instruction.getParent().convertToWorldSpace(instruction.getPosition());
-					var positionInTicker = self.convertToNodeSpace(positionInWorld);
-					if (cc.rectContainsPoint(visibleBox, positionInTicker)) {
-						instruction.setEnabled(true);
-					} else {
-						instruction.setEnabled(false);
-					};
-				};
-			}
-
 			scrollBar.setHeightForNumberOfRows();
 
 			scrollBar.onTouchDown(function() {
@@ -144,8 +130,24 @@ define(['canvasclippingnode', 'draggable', 'scrollbar', 'blbutton', 'controllaye
 			});
 
 			scrollBar.onMoveEnded(function() {
-				this.enableVisibleBoxes();
+				self.enableVisibleBoxes();
 			});
+		},
+
+		enableVisibleBoxes:function() {
+			if (!this.playing) {
+				var visibleBox = cc.RectMake(15, 10, this.boxWidth, this.boxHeight);
+				for (var i = 0; i < this.instructions.length; i++) {
+					var instruction =  this.instructions[i];
+					var positionInWorld = instruction.getParent().convertToWorldSpace(instruction.getPosition());
+					var positionInTicker = this.convertToNodeSpace(positionInWorld);
+					if (cc.rectContainsPoint(visibleBox, positionInTicker)) {
+						instruction.setEnabled(true);
+					} else {
+						instruction.setEnabled(false);
+					};
+				};
+			};
 		},
 
 		setupSpaceRows:function() {
@@ -468,6 +470,15 @@ define(['canvasclippingnode', 'draggable', 'scrollbar', 'blbutton', 'controllaye
 			this.controlLayer.setActive(true);
 		},
 
+		setPlaying:function(playing) {
+			this.playing = playing;
+			this.showPlayingDisplay(playing);
+			this.setInstructionsDraggable(!playing);
+			if (!playing) {
+				this.unhighlightAll();
+			};
+		},
+
 		showPlayingDisplay:function(playing) {
 			for (var i = 0; i < this.instructions.length; i++) {
 				var instruction = this.instructions[i];
@@ -480,6 +491,7 @@ define(['canvasclippingnode', 'draggable', 'scrollbar', 'blbutton', 'controllaye
 				};
 			};
 		},
+
 
 		showInvalidBrackets:function() {
 			var brackets = [];
