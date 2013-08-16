@@ -1,4 +1,4 @@
-define(['canvasclippingnode', 'draggable', 'scrollbar', 'blbutton', 'controllayer', 'constants'], function(CanvasClippingNode, Draggable, ScrollBar, BLButton, ControlLayer, constants) {
+define(['canvasclippingnode', 'draggable', 'scrollbar', 'blbutton', 'controllayer', 'instructiondraggable', 'constants'], function(CanvasClippingNode, Draggable, ScrollBar, BLButton, ControlLayer, InstructionDraggable, constants) {
 	'use strict';
 
 	var InstructionTypes = constants["InstructionTypes"];
@@ -222,25 +222,33 @@ define(['canvasclippingnode', 'draggable', 'scrollbar', 'blbutton', 'controllaye
 		},
 
 		highlightHovered:function(touchLocation) {
-			var highlightSpace = this.spaces[this.positionForDrop(touchLocation)];
+			var index = this.positionForDrop(touchLocation);
+			var highlightSpace = this.spaces[index];
+
 			this.clearHighlight();
-			if (highlightSpace.instruction === null) {
+			if (highlightSpace.instruction === null || highlightSpace.instruction.type === InstructionTypes.INSERT_IN_LOOP) {
 				this.highlightSpace(highlightSpace);
 			} else {
-				this.highlightBeforeSpace(highlightSpace);
+				var previousSpace = this.spaces[index-1];
+				if (previousSpace !== undefined && previousSpace.instruction.type === InstructionTypes.INSERT_IN_LOOP) {
+					this.highlightSpace(previousSpace);
+				} else {
+					this.highlightBeforeSpace(highlightSpace);
+				};
 			};
-			highlightSpace.addChild(this.highlight);
 		},
 
 		highlightSpace:function(space) {
 			this.highlight.setScale(53);
 			this.highlight.setPosition(0,0);
+			space.addChild(this.highlight);
 		},
 
 		highlightBeforeSpace:function(space) {
 			this.highlight.setScaleX(6);
 			this.highlight.setScaleY(45);
 			this.highlight.setPosition(-33, 0);
+			space.addChild(this.highlight);
 		},
 
 		clearHighlight:function() {
@@ -250,8 +258,19 @@ define(['canvasclippingnode', 'draggable', 'scrollbar', 'blbutton', 'controllaye
 		},
 
 		positionInstructions:function() {
-			for (var i = 0; i < this.instructions.length; i++) {
-				this.instructions[i].removeFromParent();
+			for (var i = this.instructions.length - 1; i >= 0; i--) {
+				var instruction = this.instructions[i];
+				instruction.removeFromParent();
+				if (instruction.type === InstructionTypes.INSERT_IN_LOOP) {
+					this.instructions.splice(i, 1);
+				} else if (instruction.type === InstructionTypes.OPEN_BRACKET) {
+					var close = instruction.linked[0];
+					if (this.instructions.indexOf(close) === i + 1) {
+						var addTip = new InstructionDraggable();
+						addTip.initWithType(InstructionTypes.INSERT_IN_LOOP);
+						this.insertInstructionBoxInPosition(addTip, i+1);
+					};
+				};
 			};
 			for (var i = 0; i < this.spaces.length; i++) {
 				var instruction = this.instructions[i] || null;
@@ -312,18 +331,21 @@ define(['canvasclippingnode', 'draggable', 'scrollbar', 'blbutton', 'controllaye
 
 		dropInInstructionBoxes:function(instructionBoxes, touchLocation) {
 			var dropIndex = this.positionForDrop(touchLocation);
-			var controlsVisible = false;
 			for (var i = 0; i < instructionBoxes.length; i++) {
 				var instructionBox = instructionBoxes[i];
 				this.insertInstructionBoxInPosition(instructionBox, dropIndex + i);
 				this.setInstructionTouchFunctions(instructionBox);
+			};
+			this.positionInstructions();
+			this.linkBrackets();
+			var controlsVisible = false;
+			for (var i = 0; i < instructionBoxes.length; i++) {
+				var instructionBox = instructionBoxes[i];
 				if (instructionBox.type['adjustable'] && !controlsVisible) {
 					this.showControlForInstruction(instructionBox);
 					controlsVisible = true;
 				};
 			};
-			this.positionInstructions();
-			this.linkBrackets();
 		},
 
 		insertInstructionBoxInPosition:function(instructionBox, positionIndex) {

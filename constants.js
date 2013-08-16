@@ -207,6 +207,18 @@ define([], function() {
 			SOUTH: _.extend(_.clone(downCommand), {filename:"south"}),
 			WEST: _.extend(_.clone(leftCommand), {filename:"west"}),
 			EAST: _.extend(_.clone(rightCommand), {filename:"east"}),
+
+			INSERT_IN_LOOP: {
+				filename: "insert_box",
+				include_in_container:false,
+				setup:function() {
+					this.setEnabled(false);
+					var label = cc.LabelTTF.create("ADD TO LOOP", "mikadoBold", 12, this.getContentSize(), cc.TEXT_ALIGNMENT_CENTER, cc.VERTICAL_TEXT_ALIGNMENT_CENTER);
+					this.addChild(label);
+				},
+				instruction_parameters: {
+				},
+			},
 		},
 
 		'TurnStyles': {
