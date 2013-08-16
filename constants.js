@@ -105,14 +105,14 @@ define([], function() {
 					move_by_distance: 0,
 				},
 				setup:function() {
-					var label = cc.LabelTTF.create("0°", "mikadoBold", 20);
-					label.setPosition(5, 0);
+					var label = cc.LabelTTF.create("0°", "mikadoBold", 18);
+					label.setPosition(1, 0);
 					this.addChild(label);
 					this.setAdjustableLabel(label);
 				},
 				adjustable: true,
 				adjustable_parameter:"turn_by_direction",
-				adjustable_min:0,
+				adjustable_min:-355,
 				adjustable_max:355,
 				adjustable_step:5,
 				formatter: function(string) {
