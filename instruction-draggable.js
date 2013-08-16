@@ -22,9 +22,9 @@ define(['draggable', 'constants'], function(Draggable, constants) {
 				this.type['setup'].call(this);
 			};
 			this.highlighter = new cc.Sprite();
-			this.highlighter.initWithFile(window.bl.getResource('blank_grey'));
+			this.highlighter.initWithFile(window.bl.getResource('block_highlight'));
+			this.highlighter.setPosition(0, 3);
 			this.addChild(this.highlighter);
-			this.highlighter.setOpacity(128);
 			this.highlighter.setVisible(false);
 
 			var self = this;
