@@ -41,7 +41,7 @@ define([], function() {
 	return {
 		'InstructionTypes':
 		{
-			UP_ARROW: _.extend(_.clone(upCommand), {filename:"splash_blocks_arrow_up"}),
+			UP_ARROW: _.extend(_.clone(upCommand), {filename:"arrow_up"}),
 			DOWN_ARROW: _.extend(_.clone(downCommand), {filename:"arrow_down"}),
 			LEFT_ARROW: _.extend(_.clone(leftCommand), {filename:"arrow_left"}),
 			RIGHT_ARROW: _.extend(_.clone(rightCommand), {filename:"arrow_right"}),
@@ -87,6 +87,35 @@ define([], function() {
 				adjustable: false,
 			},
 
+			DEGREES_BLANK: {
+				filename: "degrees_questionmark",
+				include_in_container:true,
+				replace_with: ["DEGREES_VARIABLE"],
+				setup:function() {
+					var label = cc.LabelTTF.create("?", "mikadoBold", 20);
+					this.addChild(label);
+				},
+			},
+
+			DEGREES_VARIABLE: {
+				filename: "degrees_blank",
+				include_in_container: false,
+				instruction_parameters: {
+					turn_by_direction: 0,
+					move_by_distance: 0,
+				},
+				setup:function() {
+					var label = cc.LabelTTF.create("0°", "mikadoBold", 20);
+					this.addChild(label);
+					this.setAdjustableLabel(label);
+				},
+				adjustable: true,
+				adjustable_parameter:"turn_by_direction",
+				adjustable_min:0,
+				adjustable_max:355,
+				adjustable_step:5,
+			},
+
 			STEP_MULTIPLE: {
 				filename: "step_multiple",
 				include_in_container: true,
@@ -94,14 +123,14 @@ define([], function() {
 			},
 
 			STEP: {
-				filename: "step",
+				filename: "step_multiple_blank",
 				include_in_container: false,
 				instruction_parameters: {
 					move_by_distance: 1,
 				},
 				setup:function() {
-					var label = cc.LabelTTF.create("1", "mikadoBold", 15);
-					label.setPosition(2, -9);
+					var label = cc.LabelTTF.create("1", "mikadoBold", 16);
+					label.setPosition(2, -6);
 					this.addChild(label);
 					this.setAdjustableLabel(label);
 				},
