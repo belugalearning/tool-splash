@@ -378,6 +378,10 @@ define(['canvasclippingnode', 'draggable', 'scrollbar', 'blbutton', 'controllaye
 	                    var touchRelative = self.convertToNodeSpace(touchLocation);
 	                    this.removeFromParent();
 		                self.dropInInstructionBoxes([this], touchRelative);
+		        		if (this.type['adjustable']) {
+		            		self.showControlForInstruction(this);
+		        		};
+		            	dragged = false;
 	                } else {
 	                	self.removeInstructions([this].concat(this.linked));
 	                };
@@ -386,10 +390,6 @@ define(['canvasclippingnode', 'draggable', 'scrollbar', 'blbutton', 'controllaye
 	                    highlighting = false;
 	                };
             	};
-        		if (this.type['adjustable']) {
-            		self.showControlForInstruction(this);
-        		};
-            	dragged = false;
             });
 		},
 
