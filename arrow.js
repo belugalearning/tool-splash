@@ -8,7 +8,7 @@ define(['constants'], function(constants) {
 		ctor:function() {
 			this._super();
 
-			this.drawing = false;
+			this.drawing = true;
 
 			this.initWithFile(window.bl.getResource('arrow'));
 			this.setAnchorPoint(cc.p(0.5, 0.43));

@@ -1,4 +1,4 @@
-define(['arrow'], function(Arrow) {
+define(['blbutton', 'arrow'], function(BLButton, Arrow) {
 	'use strict';
 
 	var SplashNode = cc.Node.extend({
@@ -17,18 +17,20 @@ define(['arrow'], function(Arrow) {
 			this.drawingNode;
 			this.setupDrawingNode();
 
+			this.startingPosition = this.dots[60].getPosition();
 			this.arrowNode;
 			this.arrow;
 			this.setupArrowNode();
 		},
 
 		setupLatticeNode:function() {
+			var self = this;
 			this.width = 800;
 			this.height = 450;
-			this.latticeNode = new cc.Node();
+			this.latticeNode = new cc.Layer();
 			var latticePoints = this.boundary.latticePoints(this.dotDistance, this.dotDistance, Math.PI/2, 0, 0);
 			for (var i = 0; i < latticePoints.length; i++) {
-				var dot = new cc.Sprite();
+				var dot = new BLButton();
 				dot.initWithFile(window.bl.getResource('bubble_dot'));
 				dot.setPosition(latticePoints[i]);
 				this.latticeNode.addChild(dot);
@@ -38,6 +40,11 @@ define(['arrow'], function(Arrow) {
 					var color = highlight ? cc.c3b(229, 126, 30) : cc.c3b(255, 255, 255);
 					this.setColor(color);
 				};
+
+				dot.onTouchUp(function() {
+					self.startingPosition = this.getPosition();
+					self.reset();
+				});
 			};
 			this.addChild(this.latticeNode);
 		},
@@ -53,9 +60,10 @@ define(['arrow'], function(Arrow) {
 
 			this.arrow = new Arrow();
 			this.arrow.setDrawingNode(this.drawingNode);
-			this.arrow.setPosition(this.dots[60].getPosition());
-			this.arrow.setRotation(180);
+			this.arrow.setDrawing(false);
+			this.arrow.setPosition(this.startingPosition);
 			this.arrow.setDrawing(true);
+			this.arrow.setRotation(180);
 			this.arrow.setUnitDistance(this.dotDistance);
 			this.arrowNode.addChild(this.arrow);
 			this.arrow.setBoundary(this.boundary);
