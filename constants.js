@@ -114,6 +114,9 @@ define([], function() {
 				adjustable_min:0,
 				adjustable_max:355,
 				adjustable_step:5,
+				formatter: function(string) {
+					return string + "°";
+				},
 			},
 
 			STEP_MULTIPLE: {

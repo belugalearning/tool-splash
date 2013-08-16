@@ -29,12 +29,22 @@ define(['draggable', 'constants'], function(Draggable, constants) {
 
 			var self = this;
 			if (this.type['adjustable']) {
+				var formatString = function(string) {
+					var returnString;
+					if (self.type['formatter']) {
+						returnString = self.type['formatter'].call(null, string);
+					} else {
+						returnString = string;
+					};
+					return returnString;
+				};
+
 				this.processUp = function() {
 					var adjustableParameter = this.parameters[this.type["adjustable_parameter"]];
 					if (adjustableParameter < this.type['adjustable_max']) {
 						adjustableParameter = Math.min(this.type['adjustable_max'], adjustableParameter + this.type['adjustable_step']);
 						if (this.adjustableLabel !== undefined) {
-							this.adjustableLabel.setString(adjustableParameter);
+							this.adjustableLabel.setString(formatString(adjustableParameter + ""));
 						};
 					};
 					this.parameters[this.type["adjustable_parameter"]] = adjustableParameter;
@@ -44,7 +54,7 @@ define(['draggable', 'constants'], function(Draggable, constants) {
 					if (adjustableParameter > this.type['adjustable_min']) {
 						adjustableParameter = Math.max(this.type['adjustable_min'], adjustableParameter - this.type['adjustable_step']);
 						if (this.adjustableLabel !== undefined) {
-							this.adjustableLabel.setString(adjustableParameter);
+							this.adjustableLabel.setString(formatString(adjustableParameter + ""));
 						};
 					};
 					this.parameters[this.type["adjustable_parameter"]] = adjustableParameter;
