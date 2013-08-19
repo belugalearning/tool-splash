@@ -212,6 +212,7 @@ define(['exports', 'cocos2d', 'qlayer', 'toollayer', 'instructioncontainer', 'in
                 this.fastForwardButton.setGreyedOut(this.following);
                 this.clearButton.setGreyedOut(this.following);
                 this.instructionTicker.setPlaying(this.following);
+                this.splashNode.setPlaying(this.following);
             };
         },
     });

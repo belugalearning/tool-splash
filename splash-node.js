@@ -21,6 +21,8 @@ define(['blbutton', 'arrow'], function(BLButton, Arrow) {
 			this.arrowNode;
 			this.arrow;
 			this.setupArrowNode();
+
+			this.playing = false;
 		},
 
 		setupLatticeNode:function() {
@@ -42,8 +44,10 @@ define(['blbutton', 'arrow'], function(BLButton, Arrow) {
 				};
 
 				dot.onTouchUp(function() {
-					self.startingPosition = this.getPosition();
-					self.reset();
+					if (!self.playing) {
+						self.startingPosition = this.getPosition();
+						self.reset();
+					};
 				});
 			};
 			this.addChild(this.latticeNode);
@@ -68,6 +72,10 @@ define(['blbutton', 'arrow'], function(BLButton, Arrow) {
 			this.arrowNode.addChild(this.arrow);
 			this.arrow.setBoundary(this.boundary);
 			this.addChild(this.arrowNode);
+		},
+
+		setPlaying:function(playing) {
+			this.playing = playing;
 		},
 
 		reset:function() {
