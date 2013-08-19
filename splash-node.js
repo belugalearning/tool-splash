@@ -1,4 +1,4 @@
-define(['blbutton', 'arrow'], function(BLButton, Arrow) {
+define(['blbutton', 'arrow', 'tracenode'], function(BLButton, Arrow, TraceNode) {
 	'use strict';
 
 	var SplashNode = cc.Node.extend({
@@ -14,8 +14,8 @@ define(['blbutton', 'arrow'], function(BLButton, Arrow) {
 			this.latticeNode;
 			this.setupLatticeNode();
 
-			this.drawingNode;
-			this.setupDrawingNode();
+			this.traceNode;
+			this.setupTraceNode();
 
 			this.startingPosition = this.dots[60].getPosition();
 			this.arrowNode;
@@ -58,9 +58,9 @@ define(['blbutton', 'arrow'], function(BLButton, Arrow) {
 			this.addChild(this.latticeNode);
 		},
 
-		setupDrawingNode:function() {
-			this.drawingNode = new cc.DrawNode();
-			this.addChild(this.drawingNode);
+		setupTraceNode:function() {
+			this.traceNode = new TraceNode();
+			this.addChild(this.traceNode);
 		},
 
 		setupArrowNode:function() {
@@ -68,7 +68,7 @@ define(['blbutton', 'arrow'], function(BLButton, Arrow) {
 			this.arrowNode = new cc.Node();
 
 			this.arrow = new Arrow();
-			this.arrow.setDrawingNode(this.drawingNode);
+			this.arrow.setDrawingNode(this.traceNode);
 			this.arrow.setDrawing(false);
 			this.arrow.setPosition(this.startingPosition);
 			this.arrow.setDrawing(true);
@@ -78,6 +78,8 @@ define(['blbutton', 'arrow'], function(BLButton, Arrow) {
 			this.arrowNode.addChild(this.arrow);
 			this.arrow.setBoundary(this.boundary);
 			this.addChild(this.arrowNode);
+
+			this.traceNode.vertices.push(this.startingPosition);
 		},
 
 		setPlaying:function(playing) {
@@ -85,8 +87,8 @@ define(['blbutton', 'arrow'], function(BLButton, Arrow) {
 		},
 
 		reset:function() {
-			this.drawingNode.removeFromParent();
-			this.setupDrawingNode();
+			this.traceNode.removeFromParent();
+			this.setupTraceNode();
 			this.arrowNode.removeFromParent();
 			this.setupArrowNode();
 		},

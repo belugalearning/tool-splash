@@ -17,7 +17,7 @@ define(['constants'], function(constants) {
 
 			this.unitDistance = 1;
 
-			this.drawingNode;
+			this.traceNode;
 
 			this.speed = 1;
 
@@ -29,10 +29,12 @@ define(['constants'], function(constants) {
 			this.following = false;
 
 			this.startPosition;
+
+			this.addPointToVertices = false;
 		},
 
-		setDrawingNode:function(drawingNode) {
-			this.drawingNode = drawingNode;
+		setDrawingNode:function(traceNode) {
+			this.traceNode = traceNode;
 		},
 
 		setDrawing:function(drawing) {
@@ -44,8 +46,6 @@ define(['constants'], function(constants) {
 		},
 
 		setPosition:function() {
-			var radius = 4;
-			var color = cc.c4f(229/255, 126/255, 30/255, 1);
 			var point;
 			if (arguments.length == 2) {
 				point = cc.p(arguments[0], arguments[1]);
@@ -57,8 +57,9 @@ define(['constants'], function(constants) {
 				if (!this.breakMovement) {
 					this._super(point);
 					if (this.drawing) {
-						this.drawingNode.drawDot(previousPoint, radius-1, color);
-						this.drawingNode.drawSegment(previousPoint, point, radius, color);
+						this.addPointToVertices = true;
+						this.traceNode.currentVertex = point;
+						this.traceNode.drawLastLine();
 					};
 				} else {
 					this.following = false;
@@ -71,6 +72,11 @@ define(['constants'], function(constants) {
 		setRotationX:function(rotationX) {
 			if (!this.breakMovement) {
 				this._super(rotationX);
+				if (this.addPointToVertices) {
+					this.traceNode.vertices.push(this.getPosition());
+					this.traceNode.addLastLine();
+					this.addPointToVertices = false;
+				};
 			} else {
 				this.following = false;
 			};

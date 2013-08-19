@@ -9,6 +9,7 @@ require.config({
         'splashnode': '../../tools/splash/splash-node',
         'arrow': '../../tools/splash/arrow',
         'controllayer': '../../tools/splash/control-layer',
+        'tracenode': '../../tools/splash/trace-node',
         'constants': '../../tools/splash/constants'
     }
 });
@@ -166,7 +167,7 @@ define(['exports', 'cocos2d', 'qlayer', 'toollayer', 'instructioncontainer', 'in
 
             button.onMoveEnded(function(touchLocation) {
                 self.reorderChild(button, defaultButtonZOrder);
-                if (self.instructionTicker.touched(touchLocation)) {
+                if (self.instructionTicker.touched(touchLocation) && !self.following) {
                     var touchRelative = self.instructionTicker.convertToNodeSpace(touchLocation);
                     this.removeFromParent();
                     if (this.type["replace_with"] !== undefined) {
