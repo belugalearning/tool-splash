@@ -27,6 +27,8 @@ define(['constants'], function(constants) {
 			this.breakMovement = false;
 
 			this.following = false;
+
+			this.startPosition;
 		},
 
 		setDrawingNode:function(drawingNode) {
@@ -86,6 +88,10 @@ define(['constants'], function(constants) {
 			this.boundary = cc.RectMake(boundary.origin.x-1, boundary.origin.y-1, boundary.size.width+2, boundary.size.height+2);
 		},
 
+		setStartPosition:function(position) {
+			this.startPosition = position;
+		},
+
 		freakOut:function() {
 			this.ignoreBoundary = true;
 			this.setColor(cc.c3b(255, 0, 0));
@@ -140,7 +146,7 @@ define(['constants'], function(constants) {
 					} else {
 						instruction.highlight(true);
 						index++;
-						var actions = [];			
+						var actions = [];		
 						if (instruction.parameters['turn_to_direction'] !== undefined) {
 							var turn = self.rotateToRunner(instruction.parameters['turn_to_direction'], TurnStyles.SHORTEST);
 							actions.push(turn);
@@ -151,6 +157,21 @@ define(['constants'], function(constants) {
 						if (instruction.parameters['move_by_distance'] !== undefined) {
 							var move = self.moveForwardRunner(instruction.parameters['move_by_distance'] * self.unitDistance);
 							actions.push(move);
+						};
+						if (instruction.parameters['go_to_position']) {
+							var homeRelative = instruction.parameters['go_to_position']['home_relative'];
+							var point = instruction.parameters['go_to_position']['position'];
+							var pointToGoTo = homeRelative ? cc.pAdd(point, self.startPosition) : point;
+							var currentPosition = self.getPosition();
+							var distance = cc.pDistance(pointToGoTo, currentPosition);
+							if (distance > 0.0001) {
+								var angle = Math.atan2(pointToGoTo.x - currentPosition.x, pointToGoTo.y - currentPosition.y);
+								angle = cc.RADIANS_TO_DEGREES(angle) - 90;
+								var turn = self.rotateToRunner(angle, TurnStyles.SHORTEST);
+								actions.push(turn);
+								var move = self.moveForwardRunner(distance);
+								actions.push(move);
+							};
 						};
 						actions.push(function() {
 							var unhighlight = function() {

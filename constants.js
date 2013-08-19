@@ -204,6 +204,18 @@ define([], function() {
 				},
 				adjustable: false,
 			},
+
+			GO_HOME: {
+				filename: "gotostart",
+				include_in_container: true,
+				instruction_parameters: {
+					go_to_position: {
+						home_relative: true,
+						position: cc.p(0,0),
+					},
+				},
+				adjustable:false,
+			},
 			
 			UP_WORD: _.extend(_.clone(upCommand), {filename:"up_word"}),
 			DOWN_WORD: _.extend(_.clone(downCommand), {filename:"down_word"}),

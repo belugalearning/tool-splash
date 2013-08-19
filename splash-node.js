@@ -25,6 +25,11 @@ define(['blbutton', 'arrow'], function(BLButton, Arrow) {
 			this.playing = false;
 		},
 
+		setStartingPosition:function(position) {
+			this.startingPosition = position;
+			this.arrow.setStartingPosition(position);
+		},
+
 		setupLatticeNode:function() {
 			var self = this;
 			this.width = 800;
@@ -69,6 +74,7 @@ define(['blbutton', 'arrow'], function(BLButton, Arrow) {
 			this.arrow.setDrawing(true);
 			this.arrow.setRotation(180);
 			this.arrow.setUnitDistance(this.dotDistance);
+			this.arrow.setStartPosition(this.startingPosition);
 			this.arrowNode.addChild(this.arrow);
 			this.arrow.setBoundary(this.boundary);
 			this.addChild(this.arrowNode);
