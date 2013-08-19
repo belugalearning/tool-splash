@@ -10,8 +10,8 @@ define(['constants'], function(constants) {
 
 			this.drawing = true;
 
-			this.initWithFile(window.bl.getResource('arrow'));
-			this.setAnchorPoint(cc.p(0.5, 0.43));
+			this.initWithFile(window.bl.getResource('stingray'));
+			this.setAnchorPoint(cc.p(0.7, 0.47));
 
 			this.actionFunctions = [];
 
