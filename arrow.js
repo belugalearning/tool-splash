@@ -24,7 +24,7 @@ define(['constants'], function(constants) {
 			this.boundary;
 			this.ignoreBoundary;
 
-			this.breakMovement = false;
+			// this.breakMovement = false;
 
 			this.following = false;
 
@@ -54,40 +54,40 @@ define(['constants'], function(constants) {
 			};
 			var previousPoint = this.getPosition();
 			if (this.boundary === undefined || this.ignoreBoundary === true || cc.rectContainsPoint(this.boundary, point)) {
-				if (!this.breakMovement) {
+				// if (!this.breakMovement) {
 					this._super(point);
 					if (this.drawing) {
 						this.addPointToVertices = true;
 						this.traceNode.currentVertex = point;
 						this.traceNode.drawLastLine();
 					};
-				} else {
-					this.following = false;
-				};
+				// } else {
+					// this.following = false;
+				// };
 			} else {
 				this.freakOut();
 			};
 		},
 
 		setRotationX:function(rotationX) {
-			if (!this.breakMovement) {
+			// if (!this.breakMovement) {
 				this._super(rotationX);
 				if (this.addPointToVertices) {
 					this.traceNode.vertices.push(this.getPosition());
 					this.traceNode.addLastLine();
 					this.addPointToVertices = false;
 				};
-			} else {
-				this.following = false;
-			};
+			// } else {
+				// this.following = false;
+			// };
 		},
 
 		setRotationY:function(rotationY) {
-			if (!this.breakMovement) {
+			// if (!this.breakMovement) {
 				this._super(rotationY);
-			} else {
-				this.following = false;
-			};
+			// } else {
+				// this.following = false;
+			// };
 		},
 
 		setBoundary:function(boundary) {
@@ -98,7 +98,12 @@ define(['constants'], function(constants) {
 			this.startPosition = position;
 		},
 
+		setSpeed:function(speed) {
+			this.speed = speed;
+		},
+
 		freakOut:function() {
+			this.getActionManager().removeAllActionsFromTarget(this);
 			this.ignoreBoundary = true;
 			this.setColor(cc.c3b(255, 0, 0));
 			var shakes = [];
@@ -113,8 +118,8 @@ define(['constants'], function(constants) {
 			var returnAction = cc.MoveTo.create(0.05, homePosition);
 			shakes.push(returnAction);
 			var self = this;
-			var callBreak = cc.CallFunc.create(function() {self.breakMovement = true});
-			shakes.push(callBreak);
+			// var callBreak = cc.CallFunc.create(function() {self.breakMovement = true});
+			// shakes.push(callBreak);
 			var sequence = cc.Sequence.create(shakes);
 			this.drawing = false;
 			this.runAction(sequence);
@@ -125,7 +130,7 @@ define(['constants'], function(constants) {
 			var self = this;
 			this.following = true;
 			var followNextInstruction = function() {
-				if (index < instructions.length && !self.breakMovement) {
+				if (index < instructions.length) {
 					var instruction = instructions[index];
 					if (instruction.type === InstructionTypes.OPEN_BRACKET) {
 						instruction.loopsRemaining = instruction.parameters['loop_times'];
@@ -181,9 +186,9 @@ define(['constants'], function(constants) {
 						};
 						actions.push(function() {
 							var unhighlight = function() {
-								if (!self.breakMovement) {
+								// if (!self.breakMovement) {
 									instruction.highlight(false);
-								};
+								// };
 							}
 							return cc.CallFunc.create(unhighlight);
 						})
@@ -197,7 +202,9 @@ define(['constants'], function(constants) {
 								actionIndex++;
 								var call = cc.CallFunc.create(next);
 								var sequence = cc.Sequence.create(action, call);
-								self.runAction(sequence);
+								var speed = cc.Speed.create(sequence, self.speed);
+								speed.setTag("speed");
+								self.runAction(speed);
 							};
 						};
 						next();
@@ -215,7 +222,7 @@ define(['constants'], function(constants) {
 			var moveForward = function() {
 				var rotation = self.getRotation() * 2 * Math.PI / 360;
 				var duration = distance/self.unitDistance;
-				var moveBy = cc.MoveBy.create(duration/self.speed, cc.p(distance * Math.cos(rotation), -distance * Math.sin(rotation)));
+				var moveBy = cc.MoveBy.create(duration, cc.p(distance * Math.cos(rotation), -distance * Math.sin(rotation)));
 				return moveBy;
 			}
 			return moveForward;
@@ -225,7 +232,7 @@ define(['constants'], function(constants) {
 			var self = this;
 			var rotate = function() {
 				var duration = Math.abs(angle)/90;
-				var rotate = cc.RotateBy.create(duration/self.speed, angle);
+				var rotate = cc.RotateBy.create(duration, angle);
 				return rotate;
 			}
 			return rotate;
