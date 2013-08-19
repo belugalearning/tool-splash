@@ -333,9 +333,7 @@ define(['canvasclippingnode', 'draggable', 'scrollbar', 'blbutton', 'controllaye
 					pair[0].linked = [pair[1]];
 					pair[1].linked = [pair[0]];
 				};
-			} else {
-				console.log("Invalid brackets!");
-			};
+			}
 			this.valid = valid;
 		},
 
