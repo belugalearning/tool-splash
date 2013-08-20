@@ -65,11 +65,6 @@ define(['constants'], function(constants) {
 
 		setRotationX:function(rotationX) {
 			this._super(rotationX);
-			if (this.addPointToVertices) {
-				this.traceNode.vertices.push(this.getPosition());
-				this.traceNode.addLastLine();
-				this.addPointToVertices = false;
-			};
 		},
 
 		setRotationY:function(rotationY) {
@@ -222,6 +217,11 @@ define(['constants'], function(constants) {
 				var rotate = cc.RotateBy.create(duration, angle);
 				return rotate;
 			}
+			if (this.addPointToVertices && Math.abs(angle) >= 0.0001) {
+				this.traceNode.vertices.push(this.getPosition());
+				this.traceNode.addLastLine();
+				this.addPointToVertices = false;
+			};
 			return rotate;
 		},
 
