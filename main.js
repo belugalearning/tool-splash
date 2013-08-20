@@ -38,8 +38,6 @@ define(['exports', 'cocos2d', 'qlayer', 'toollayer', 'instructioncontainer', 'in
 
             this._windowSize = cc.Director.getInstance().getWinSize();
 
-            cc.Director.getInstance().setDisplayStats(true);
-
             this.setQuestion();
 
             this.following = true;
