@@ -193,6 +193,7 @@ define(['constants'], function(constants) {
 					};
 				} else {
 					self.following = false;
+					self.setOpacity(128);
 				};
 			};
 			followNextInstruction();
