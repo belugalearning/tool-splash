@@ -44,6 +44,8 @@ define(['exports', 'cocos2d', 'qlayer', 'toollayer', 'instructioncontainer', 'in
 
             this.following = true;
 
+            this.placed = false;
+
             return this;
         },
 
@@ -90,6 +92,8 @@ define(['exports', 'cocos2d', 'qlayer', 'toollayer', 'instructioncontainer', 'in
             var self = this;
 
             var highlighting = false;
+
+            button.setEnabled(false);
 
             button.onTouchDown(function(touchLocation) {
                 this.removeFromParent();
@@ -231,6 +235,10 @@ define(['exports', 'cocos2d', 'qlayer', 'toollayer', 'instructioncontainer', 'in
             this.notFollowingGrey = [stopButton, pauseButton];
         },
 
+        enableAfterPlacing:function() {
+            for (var i = 0; i < this.instructionContainer.buttons.length; i++) {
+                this.instructionContainer.buttons[i].setEnabled(true);
+            };
         },
 
         update:function() {
@@ -242,6 +250,10 @@ define(['exports', 'cocos2d', 'qlayer', 'toollayer', 'instructioncontainer', 'in
                 };
                 this.instructionTicker.setPlaying(this.following);
                 this.splashNode.setPlaying(this.following);
+            };
+            if (this.placed !== this.splashNode.placed) {
+                this.enableAfterPlacing();
+                this.instructionTicker.processPlaced();
             };
         },
     });

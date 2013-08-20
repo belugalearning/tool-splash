@@ -50,6 +50,11 @@ define(['canvasclippingnode', 'draggable', 'scrollbar', 'blbutton', 'controllaye
 			this.addChild(this.controlLayer);
 
 			this.playing = false;
+
+            this.positionTip = new cc.LabelTTF.create("Click on a dot to place the stingray", "mikadoBold", 40);
+            this.positionTip.setPosition(cc.pAdd(this.getAnchorPointInPoints(), cc.p(0, 3)));
+            this.addChild(this.positionTip);
+            this.spacesNode.setVisible(false);
 		},
 
 		setupScrollBar:function() {
@@ -490,7 +495,6 @@ define(['canvasclippingnode', 'draggable', 'scrollbar', 'blbutton', 'controllaye
 			};
 		},
 
-
 		showInvalidBrackets:function() {
 			var brackets = [];
 			for (var i = 0; i < this.instructions.length; i++) {
@@ -517,6 +521,11 @@ define(['canvasclippingnode', 'draggable', 'scrollbar', 'blbutton', 'controllaye
 			for (var i = 0; i < brackets.length; i++) {
 				brackets[i].runAction(shakeAction(i));
 			};
+		},
+
+		processPlaced:function() {
+			this.spacesNode.setVisible(true);
+			this.positionTip.setVisible(false);
 		},
 	})
 

@@ -43,6 +43,10 @@ define(['instructiondraggable', 'constants'], function(InstructionDraggable, con
 		onMoveEnded:function(cb) {
 			this.draggable.onMoveEnded(cb);
 		},
+
+		setEnabled:function(enabled) {
+			this.draggable.setEnabled(enabled);
+		},
 	})
 
 	return InstructionDragButton;

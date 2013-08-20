@@ -22,8 +22,7 @@ define(['constants'], function(constants) {
 			this.speed = 1;
 
 			this.boundary;
-			this.ignoreBoundary;
-
+			this.ignoreBoundary = true;
 
 			this.following = false;
 
@@ -87,6 +86,10 @@ define(['constants'], function(constants) {
 
 		setSpeed:function(speed) {
 			this.speed = speed;
+		},
+
+		setIgnoreBoundary:function(ignore) {
+			this.ignoreBoundary = ignore;
 		},
 
 		freakOut:function() {

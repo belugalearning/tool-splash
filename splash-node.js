@@ -17,12 +17,13 @@ define(['blbutton', 'arrow', 'tracenode'], function(BLButton, Arrow, TraceNode) 
 			this.traceNode;
 			this.setupTraceNode();
 
-			this.startingPosition = this.dots[60].getPosition();
+			this.startingPosition = cc.p(-473, -200);
 			this.arrowNode;
 			this.arrow;
 			this.setupArrowNode();
 
 			this.playing = false;
+			this.placed = false;
 		},
 
 		setStartingPosition:function(position) {
@@ -52,6 +53,7 @@ define(['blbutton', 'arrow', 'tracenode'], function(BLButton, Arrow, TraceNode) 
 					if (!self.playing) {
 						self.startingPosition = this.getPosition();
 						self.reset();
+						self.placed = true;
 					};
 				});
 			};
