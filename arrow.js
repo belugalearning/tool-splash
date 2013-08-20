@@ -22,7 +22,7 @@ define(['constants'], function(constants) {
 			this.speed = 1;
 
 			this.boundary;
-			this.ignoreBoundary = true;
+			this.ignoreBoundary;
 
 			this.following = false;
 

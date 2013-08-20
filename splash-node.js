@@ -54,6 +54,7 @@ define(['blbutton', 'arrow', 'tracenode'], function(BLButton, Arrow, TraceNode) 
 						self.startingPosition = this.getPosition();
 						self.reset();
 						self.placed = true;
+						self.arrow.setIgnoreBoundary(false);
 					};
 				});
 			};
@@ -80,6 +81,8 @@ define(['blbutton', 'arrow', 'tracenode'], function(BLButton, Arrow, TraceNode) 
 			this.arrowNode.addChild(this.arrow);
 			this.arrow.setBoundary(this.boundary);
 			this.addChild(this.arrowNode);
+
+			this.arrow.setIgnoreBoundary(!this.placed);
 
 			this.traceNode.vertices.push(this.startingPosition);
 		},

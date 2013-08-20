@@ -216,7 +216,7 @@ define(['exports', 'cocos2d', 'qlayer', 'toollayer', 'instructioncontainer', 'in
             this.addChild(stopButtonPanel);
 
             var stopButton = new BLButton();
-            stopButton.initWithFile(window.bl.getResource('free_form_closebutton'));
+            stopButton.initWithFile(window.bl.getResource('stop_button'));
             stopButton.setPosition(cc.pAdd(stopButtonPanel.getAnchorPointInPoints(), cc.p(0, -1)));
             stopButtonPanel.addChild(stopButton);
             stopButton.onTouchUp(function() {
