@@ -24,7 +24,6 @@ define(['constants'], function(constants) {
 			this.boundary;
 			this.ignoreBoundary;
 
-			// this.breakMovement = false;
 
 			this.following = false;
 
@@ -54,40 +53,28 @@ define(['constants'], function(constants) {
 			};
 			var previousPoint = this.getPosition();
 			if (this.boundary === undefined || this.ignoreBoundary === true || cc.rectContainsPoint(this.boundary, point)) {
-				// if (!this.breakMovement) {
-					this._super(point);
-					if (this.drawing) {
-						this.addPointToVertices = true;
-						this.traceNode.currentVertex = point;
-						this.traceNode.drawLastLine();
-					};
-				// } else {
-					// this.following = false;
-				// };
+				this._super(point);
+				if (this.drawing) {
+					this.addPointToVertices = true;
+					this.traceNode.currentVertex = point;
+					this.traceNode.drawLastLine();
+				};
 			} else {
 				this.freakOut();
 			};
 		},
 
 		setRotationX:function(rotationX) {
-			// if (!this.breakMovement) {
-				this._super(rotationX);
-				if (this.addPointToVertices) {
-					this.traceNode.vertices.push(this.getPosition());
-					this.traceNode.addLastLine();
-					this.addPointToVertices = false;
-				};
-			// } else {
-				// this.following = false;
-			// };
+			this._super(rotationX);
+			if (this.addPointToVertices) {
+				this.traceNode.vertices.push(this.getPosition());
+				this.traceNode.addLastLine();
+				this.addPointToVertices = false;
+			};
 		},
 
 		setRotationY:function(rotationY) {
-			// if (!this.breakMovement) {
-				this._super(rotationY);
-			// } else {
-				// this.following = false;
-			// };
+			this._super(rotationY);
 		},
 
 		setBoundary:function(boundary) {
@@ -118,8 +105,6 @@ define(['constants'], function(constants) {
 			var returnAction = cc.MoveTo.create(0.05, homePosition);
 			shakes.push(returnAction);
 			var self = this;
-			// var callBreak = cc.CallFunc.create(function() {self.breakMovement = true});
-			// shakes.push(callBreak);
 			var sequence = cc.Sequence.create(shakes);
 			this.drawing = false;
 			this.runAction(sequence);
@@ -186,9 +171,7 @@ define(['constants'], function(constants) {
 						};
 						actions.push(function() {
 							var unhighlight = function() {
-								// if (!self.breakMovement) {
-									instruction.highlight(false);
-								// };
+								instruction.highlight(false);
 							}
 							return cc.CallFunc.create(unhighlight);
 						})
