@@ -90,6 +90,7 @@ define(['constants'], function(constants) {
 		},
 
 		freakOut:function() {
+			this.following = false;
 			this.getActionManager().removeAllActionsFromTarget(this);
 			this.ignoreBoundary = true;
 			this.setColor(cc.c3b(255, 0, 0));

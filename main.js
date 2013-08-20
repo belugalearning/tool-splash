@@ -42,7 +42,7 @@ define(['exports', 'cocos2d', 'qlayer', 'toollayer', 'instructioncontainer', 'in
 
             this.setQuestion();
 
-            this.following = false;
+            this.following = true;
 
             return this;
         },
@@ -145,31 +145,16 @@ define(['exports', 'cocos2d', 'qlayer', 'toollayer', 'instructioncontainer', 'in
             });
         },
 
-        showPlay:function(play) {
-            this.playButton.setVisible(play);
-            this.playButton.setEnabled(play);
-            this.stopButton.setVisible(!play);
-            this.stopButton.setEnabled(!play);
-        },
-
         setupPlayControls:function() {
             var self = this;
-
-            var playButtonPanel = new cc.Sprite();
-            playButtonPanel.initWithFile(window.bl.getResource('play_button_panel'));
-            playButtonPanel.setPosition(this._windowSize.width - playButtonPanel.getContentSize().width/2, 700);
-            this.addChild(playButtonPanel);
-
-            this.playButton = new BLButton();
-            this.playButton.initWithFile(window.bl.getResource('play_button'));
-            this.playButton.setPosition(cc.pAdd(playButtonPanel.getAnchorPointInPoints(), cc.p(0, -1)));
-            playButtonPanel.addChild(this.playButton);
 
             var play = function(speed) {
                 if (self.following) {
                     self.splashNode.arrow.setSpeed(speed);
-                    var speed = self.getActionManager().getActionByTag("speed", self.splashNode.arrow);
-                    speed.setSpeed(speed);
+                    var speedAction = self.getActionManager().getActionByTag("speed", self.splashNode.arrow);
+                    if (speedAction !== null) {
+                        speedAction.setSpeed(speed);
+                    };
                     self.getActionManager().resumeTarget(self.splashNode.arrow);
                 } else {
                     if (self.instructionTicker.valid) {
@@ -184,7 +169,17 @@ define(['exports', 'cocos2d', 'qlayer', 'toollayer', 'instructioncontainer', 'in
                 };
             };
 
-            this.playButton.onTouchUp(function() {
+            var playButtonPanel = new cc.Sprite();
+            playButtonPanel.initWithFile(window.bl.getResource('play_button_panel'));
+            playButtonPanel.setPosition(this._windowSize.width - playButtonPanel.getContentSize().width/2, 700);
+            this.addChild(playButtonPanel);
+
+            var playButton = new BLButton();
+            playButton.initWithFile(window.bl.getResource('play_button'));
+            playButton.setPosition(cc.pAdd(playButtonPanel.getAnchorPointInPoints(), cc.p(0, -1)));
+            playButtonPanel.addChild(playButton);
+
+            playButton.onTouchUp(function() {
                 play(1);
             });
 
@@ -193,47 +188,48 @@ define(['exports', 'cocos2d', 'qlayer', 'toollayer', 'instructioncontainer', 'in
             pauseButtonPanel.setPosition(this._windowSize.width - pauseButtonPanel.getContentSize().width/2, 610);
             this.addChild(pauseButtonPanel);
 
-            this.pauseButton = new BLButton();
-            this.pauseButton.initWithFile(window.bl.getResource('pause_button'));
-            this.pauseButton.setPosition(cc.pAdd(pauseButtonPanel.getAnchorPointInPoints(), cc.p(0, -1)));
-            pauseButtonPanel.addChild(this.pauseButton);
-            this.pauseButton.onTouchUp(function() {
+            var pauseButton = new BLButton();
+            pauseButton.initWithFile(window.bl.getResource('pause_button'));
+            pauseButton.setPosition(cc.pAdd(pauseButtonPanel.getAnchorPointInPoints(), cc.p(0, -1)));
+            pauseButtonPanel.addChild(pauseButton);
+            pauseButton.onTouchUp(function() {
                     self.getActionManager().pauseTarget(self.splashNode.arrow);
                 }
             );
 
-            var stopButtonPanel = new cc.Sprite();
-            stopButtonPanel.initWithFile(window.bl.getResource('play_button_panel'));
-            stopButtonPanel.setPosition(this._windowSize.width - stopButtonPanel.getContentSize().width/2, 520);
-            this.addChild(stopButtonPanel);
+            var fastForwardButton = new BLButton();
+            fastForwardButton.initWithFile(window.bl.getResource('fastforward_button'));
+            fastForwardButton.setPosition(this._windowSize.width - fastForwardButton.getContentSize().width/2, 520);
+            this.addChild(fastForwardButton);
 
-            this.stopButton = new BLButton();
-            this.stopButton.initWithFile(window.bl.getResource('free_form_closebutton'));
-            this.stopButton.setPosition(cc.pAdd(stopButtonPanel.getAnchorPointInPoints(), cc.p(0, -1)));
-            stopButtonPanel.addChild(this.stopButton);
-            this.stopButton.onTouchUp(function() {
-                self.splashNode.reset();
-            });
-
-            this.fastForwardButton = new BLButton();
-            this.fastForwardButton.initWithFile(window.bl.getResource('fastforward_button'));
-            this.fastForwardButton.setPosition(this._windowSize.width - this.fastForwardButton.getContentSize().width/2, 430);
-            this.addChild(this.fastForwardButton);
-            this.fastForwardButton.onTouchUp(function() {
+            fastForwardButton.onTouchUp(function() {
                 play(8);
             });
 
-            this.clearButton = new BLButton();
-            this.clearButton.initWithFile(window.bl.getResource('reset_button'));
-            this.clearButton.setPosition(this._windowSize.width - this.clearButton.getContentSize().width/2, 300);
-            this.addChild(this.clearButton);
-            this.clearButton.onTouchUp(function() {
+            var stopButtonPanel = new cc.Sprite();
+            stopButtonPanel.initWithFile(window.bl.getResource('play_button_panel'));
+            stopButtonPanel.setPosition(this._windowSize.width - stopButtonPanel.getContentSize().width/2, 430);
+            this.addChild(stopButtonPanel);
+
+            var stopButton = new BLButton();
+            stopButton.initWithFile(window.bl.getResource('free_form_closebutton'));
+            stopButton.setPosition(cc.pAdd(stopButtonPanel.getAnchorPointInPoints(), cc.p(0, -1)));
+            stopButtonPanel.addChild(stopButton);
+            stopButton.onTouchUp(function() {
+                self.splashNode.reset();
+            });
+
+            var clearButton = new BLButton();
+            clearButton.initWithFile(window.bl.getResource('reset_button'));
+            clearButton.setPosition(this._windowSize.width - clearButton.getContentSize().width/2, 300);
+            this.addChild(clearButton);
+            clearButton.onTouchUp(function() {
                 self.instructionTicker.clearInstructions();
                 self.splashNode.reset();
             })
 
-
-
+            this.notFollowingGrey = [stopButton, pauseButton];
+        },
 
         },
 
@@ -241,9 +237,9 @@ define(['exports', 'cocos2d', 'qlayer', 'toollayer', 'instructioncontainer', 'in
             this._super();
             if (this.following !== this.splashNode.arrow.following) {
                 this.following = this.splashNode.arrow.following;
-                // this.showPlay(!this.following);
-                // this.fastForwardButton.setGreyedOut(this.following);
-                // this.clearButton.setGreyedOut(this.following);
+                for (var i = 0; i < this.notFollowingGrey.length; i++) {
+                    this.notFollowingGrey[i].setGreyedOut(!this.following);
+                };
                 this.instructionTicker.setPlaying(this.following);
                 this.splashNode.setPlaying(this.following);
             };
