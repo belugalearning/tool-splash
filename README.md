@@ -79,3 +79,26 @@ The vertices of the shape being drawn are in the vertices property of the TraceN
 There is some functionality for setting the arrow's movement from points instead of turn/move instructions. It is currently only used for the "Go to start" instruction but it would be probably be possible to use this to have a premade path for the arrow when we come to set questions for it. I think it would be relatively simple to predraw lines rather than having them strictly when the arrow traces them out.
 
 There is currently no evaluation for the area/perimeter of the shape the arrow makes. It would be best to refactor out the code that does this for the geoboard. This is likely to be tricky since the geoboard uses quite a lot of geoboard-specific functionality to find the area. Hacky way of doing it would be to make the geoboard stuff common, then to find the area we make a new geoboard, a new band with the vertices of the arrow's path, and calculate the area using the prewritten functions. This sounds like a bad idea.
+
+
+### Files
+
+* `main`: sets up the rest of the objects and touch functions for draggables
+
+* `instruction_container`: holds instruction drag buttons
+
+* `instruction_drag_button`: has a dummy button sprite and invisible draggable, to show in instruction_container
+
+* `instruction_draggable`: draggable instruction blocks for placing in the ticker
+
+* `instruction_ticker`: holds the list of instructions for the arrow to follow
+
+* `splash_node`: parent of nodes that hold the lattice grid, the arrow and the lines drawn
+
+* `arrow`: the arrow (stingray) displayed. Also responsible for moving itself according to instructions passed to it, and telling the tracenode what lines to draw.
+
+* `trace_node`: A drawnode extension for drawing the lines traced out by the arrow
+
+* `control_layer`: A layer of up/down buttons to allow users to adjust instructions with adjustable parameters
+
+* 'constants': holds the different types of instruction block. Also has different ways of turning the arrow, but that's not used much.
