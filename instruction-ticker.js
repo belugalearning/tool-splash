@@ -42,12 +42,12 @@ define(['scrollcontainer', 'canvasclippingnode', 'draggable', 'scrollbar', 'blbu
 			this.setupSpaceRows();
 			clipper.addChild(this.spacesNode);
 
-			this.setScrollBarSpace(28, 140, 914);
-			this.setScrollBarFunctions();
 
 			this.instructions = [];
 			this.valid;
 
+			this.setScrollBarSpace(28, 140, 914);
+			this.setScrollBarFunctions();
 			this.onScrollEnd(function() {
 				self.enableVisibleBoxes();
 			})
