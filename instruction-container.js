@@ -39,51 +39,11 @@ define(['instructiondragbutton', 'scrollcontainer', 'constants'], function(Instr
             };
             this.setScrollBarSpace(20, 1000, 16);
             this.setScrollBarFunctions();
-
-            // this.setupScrollBar();
-
 		},
 
 		getPositionForInstruction:function(type) {
 			return cc.p(50 + 63 * this.buttons.length, this.getContentSize().height/2 + 3);
 		},
-
-		// setupScrollBar:function() {
-		// 	var self = this;
-
-		// 	var scrollBarLowerX = 20;
-		// 	var scrollBarUpperX = 1000;
-		// 	var scrollBarY = 16;
-
-  //           var scrollBar = new ScrollBar();
-  //           this.scrollBar = scrollBar;
-  //           scrollBar.initWithOrientation(false);
-  //           this.addChild(scrollBar);
-
-  //           scrollBar.setDragAreaRect(cc.RectMake(scrollBarLowerX + scrollBar.bottomHeight(), scrollBarY,
-  //               scrollBarUpperX - scrollBarLowerX - scrollBar.topHeight() - scrollBar.bottomHeight(), 0));
-  //           var barSpace = scrollBarUpperX - scrollBarLowerX;
-  //           var scrollNodeSpace = this.getPositionForInstruction(this.buttons.length - 1).x
-  //           var height = (barSpace * this.getContentSize().width/scrollNodeSpace).putInBounds(20, barSpace);
-  //           scrollBar.setHeight(height);
-  //           var lowerLimit = scrollBarLowerX + scrollBar.getHeight()/2;
-  //           var upperLimit = scrollBarUpperX - scrollBar.getHeight()/2;
-  //           scrollBar.setPosition(cc.p(lowerLimit, scrollBarY));
-
-
-  //           scrollBar.onTouchDown(function() {
-  //               this.processUserScroll();
-  //           });
-
-  //           scrollBar.onMoved(function() {
-  //               this.processUserScroll();
-  //           });
-
-  //           scrollBar.processUserScroll = function() {
-  //               var scrollProportion = (this.getPosition().x - lowerLimit)/(upperLimit - lowerLimit);
-  //               instructionsNode.setPosition(-scrollProportion * (scrollNodeSpace - self.getContentSize().width), 0);
-  //           };
-		// },
 	})
 
 	return InstructionBox;

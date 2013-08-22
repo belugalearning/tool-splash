@@ -52,10 +52,6 @@ define(['scrollcontainer', 'canvasclippingnode', 'draggable', 'scrollbar', 'blbu
 				self.enableVisibleBoxes();
 			})
 
-
-
-			// this.setupScrollBar();
-
 			this.highlight = new cc.Sprite();
 			this.highlight.initWithFile(window.bl.getResource('single_white_pixel'));
 			this.highlight.setOpacity(128);
@@ -71,83 +67,6 @@ define(['scrollcontainer', 'canvasclippingnode', 'draggable', 'scrollbar', 'blbu
             this.addChild(this.positionTip);
             this.spacesNode.setVisible(false);
 		},
-
-/*		setupScrollBar:function() {
-			var self = this;
-
-			var scrollBarUpperY = 140;
-			var scrollBarLowerY = 28;
-			var scrollBarX = 914;
-
-			var scrollBar = new ScrollBar();
-			scrollBar.initWithOrientation(true);
-			this.scrollBar = scrollBar;
-			this.addChild(scrollBar);*/
-
-/*			scrollBar.setDragAreaRect(cc.RectMake(scrollBarX, scrollBarLowerY + scrollBar.bottomHeight(), 0,
-				scrollBarUpperY - scrollBarLowerY - scrollBar.topHeight() - scrollBar.bottomHeight()));
-
-			scrollBar.scrollProportion = 0;
-*/
-
-
-
-/*			scrollBar.scrollToProportion = function(proportion) {
-				this.scrollProportion = Math.min(proportion, 1);
-				scrollBar.setPosition(cc.p(scrollBarX, this.upperLimit() - this.scrollProportion * (this.upperLimit() - this.lowerLimit())));
-				this.scrollSpaceNode();
-				self.enableVisibleBoxes();
-			},*/
-
-/*			scrollBar.processUserScroll = function() {
-				this.adjustProportion();
-				this.scrollSpaceNode();
-			}*/
-
-/*			scrollBar.adjustProportion = function() {
-				var height = this.getHeight();
-				this.scrollProportion = (scrollBar.upperLimit() - this.getPosition().y)/(scrollBar.upperLimit() - scrollBar.lowerLimit());
-			}*/
-
-/*			scrollBar.scrollSpaceNode = function() {
-				self.spacesNode.setPosition(0, this.scrollProportion * (self.spacesNode.height() - 2 * self.spaceHeight));
-			};
-*//*
-			scrollBar.setHeightForNumberOfRows = function() {
-				var scrollBarSpace = scrollBarUpperY - scrollBarLowerY;
-				var height = (scrollBarSpace * self.boxHeight / self.spacesNode.height()).putInBounds(20, scrollBarSpace);
-				this.setHeight(height);
-				this.scrollToProportion(this.scrollProportion);
-			};
-
-			scrollBar.getNodeHeight = function() {
-				return this.scrollProportion * (self.spacesNode.height() - self.boxHeight);
-			},
-
-			scrollBar.scrollToHeight = function(height) {
-				var proportion = height/(self.spacesNode.height() - self.boxHeight);
-				this.scrollToProportion(proportion);
-			};
-
-			scrollBar.scrollToRow = function(rowIndex) {
-				var height = rowIndex * self.boxHeight;
-				this.scrollToHeight(height);
-			};
-
-			scrollBar.setHeightForNumberOfRows();
-
-			scrollBar.onTouchDown(function() {
-				this.processUserScroll();
-			});
-
-			scrollBar.onMoved(function() {
-				this.processUserScroll();
-			});
-
-			scrollBar.onMoveEnded(function() {
-				self.enableVisibleBoxes();
-			});*/
-		// },
 
 		enableVisibleBoxes:function() {
 			if (!this.playing) {
@@ -224,7 +143,6 @@ define(['scrollcontainer', 'canvasclippingnode', 'draggable', 'scrollbar', 'blbu
 
 		processChangeInNumberOfRows:function() {
 			this.correctSpaces();
-			// this.setHeightForNumberOfRows();
 			this.setScrollBarHeight();
 		},
 
